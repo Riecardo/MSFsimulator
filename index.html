@@ -27,7 +27,7 @@
         }
 
         /* 日间模式类 */
-        body.day-mode {
+        body:not(.night-mode) { /* 默认改为日间模式逻辑 */
             --bg: #fdf6e3;
             --panel: #ffffff;
             --text: #333333;
@@ -43,6 +43,23 @@
             --bio-text: #5d4037;
             --hover: #fffdf5;
             --danger: #c0392b;
+        }
+        body.night-mode { /* 切换类改为夜间 */
+            --bg: #121212;
+            --panel: #1e1e1e;
+            --text: #e0e0e0;
+            --primary: #ff4d4d;
+            --accent: #d35400;
+            --green: #2ecc71;
+            --blue: #3498db;
+            --gold: #f1c40f;
+            --purple: #9b59b6;
+            --border: #333;
+            --input-bg: #2d2d2d;
+            --bio-bg: #2a2520;
+            --bio-text: #bdc3c7;
+            --hover: #333;
+            --danger: #e74c3c;
         }
 
         body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; transition: background 0.3s, color 0.3s; padding-bottom: var(--nav-height); }
@@ -411,7 +428,7 @@
                 <p style="font-size:0.8em; color:#888;">连胜要求: Lv2(3), Lv3(5), Lv4(10), Lv5(15), Lv6(20)</p>
                 <button class="skill-btn" id="btn-start-exam" onclick="startExam()">✍️ 开始考试</button>
                 
-                <details style="margin-top:20px; border:1px solid var(--border); padding:10px; border-radius:4px;">
+                <details style="display:none;">
                     <summary style="cursor:pointer; font-size:0.8em; color:#888;">[开发者] 导入题库</summary>
                     <textarea id="exam-import-area" style="width:100%; height:100px; background:var(--input-bg); color:var(--text); border:none; margin-top:5px;" placeholder='[{"q":"问题?","o":["A","B","C","D"],"a":0},...]'></textarea>
                     <button onclick="importQuestions()" style="width:100%; margin-top:5px; font-size:0.8em;">导入JSON</button>
@@ -426,7 +443,7 @@
 
         <div id="tab-base" class="tab-content">
             <div class="stat-box" style="margin-bottom:15px; border-left-color:var(--gold);">
-                <div>💰 基地资金: <span id="val-funds" style="font-weight:bold; color:var(--gold);">$10000</span></div>
+                <div>💰 基地资金: <span id="val-funds" style="font-weight:bold; color:var(--gold); cursor:pointer;" onclick="handleFundsClick()">$10000</span></div>
                 <div style="font-size:0.9em; margin-top:5px;">🏰 等级: <span id="val-base-lvl">基础医疗点</span> (Lv.<span id="val-base-lvl-num">1</span>)</div>
                 <div style="font-size:0.8em; color:#888;">每季消耗: $1000 - (行政x10) + (紧张x10) | 拨款 +$1000</div>
             </div>
@@ -447,13 +464,6 @@
             <button class="action-btn" onclick="doAction('big_spender')"><span>💸 大撒币行动</span><span style="font-size:0.8em; color:#888;">资金-1000, 紧张-8</span></button>
             
             <h4 style="margin-top:20px; color:var(--gold);">资金操作</h4>
-            
-            <div class="slider-container" style="border-left:4px solid var(--primary);">
-                <div style="margin-bottom:5px;">🕵️ 挪用公款 <span id="em-val" class="slider-val">0%</span></div>
-                <input type="range" id="em-slider" min="0" max="100" value="0" oninput="updateSliderUI('em')">
-                <div style="font-size:0.8em; color:#aaa;">挪用基地 <span id="em-steal">$0</span> -> 个人获得 <span id="em-gain">$0</span> (嫌疑↑)</div>
-                <button class="action-btn" style="margin-top:5px; justify-content:center; border-color:var(--primary);" onclick="commitEmbezzle()">确认挪用</button>
-            </div>
 
             <div class="slider-container" style="border-left:4px solid var(--green);">
                 <div style="margin-bottom:5px;">🤝 捐赠资金 <span id="don-val" class="slider-val">0%</span></div>
@@ -485,9 +495,9 @@
 
         <div id="tab-achievements" class="tab-content">
             <h3>🏆 履历记录</h3>
-            <ul id="achievement-list" class="achieve-list">
-                <li class="achieve-item">游戏开始 - 抵达前线</li>
-            </ul>
+            <div id="achievement-progress-container" style="margin-bottom:20px;">
+            </div>
+            <ul id="achievement-list" class="achieve-list"></ul>
         </div>
 
     </div>
@@ -611,9 +621,28 @@
     </div>
 </div>
 
+<div id="embezzle-modal" class="custom-modal">
+    <div class="modal-content">
+        <div class="modal-header" style="background:var(--primary); color:white;">🕵️ 挪用公款？</div>
+        <div class="modal-body">
+            <p style="margin-bottom:20px; line-height:1.6;">你确定要挪用基地资金吗？这将增加你的嫌疑度。</p>
+            <div class="slider-container" style="border-left:4px solid var(--primary); margin-bottom:15px;">
+                <div style="margin-bottom:5px;">挪用比例 <span id="embezzle-val" class="slider-val">0%</span></div>
+                <input type="range" id="embezzle-slider" min="0" max="100" value="0" oninput="updateEmbezzleSlider()">
+                <div style="font-size:0.8em; color:#aaa;">挪用基地 <span id="embezzle-steal">$0</span> -> 个人获得 <span id="embezzle-gain">$0</span></div>
+                <div style="font-size:0.8em; color:var(--danger); margin-top:5px;">预计嫌疑度增加: <span id="embezzle-suspicion">0-5</span></div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button class="modal-btn secondary" onclick="closeEmbezzleModal()">取 消</button>
+                <button class="modal-btn" onclick="confirmEmbezzle()">确认挪用</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // --- 开发者配置 ---
-    const DEVELOPER_API_KEY = "sk-9587151f054b41cf903c0b7d892f67c0"; // 开发者可在此填入默认KEY
+    const DEVELOPER_API_KEY = "sk-"; // 开发者可在此填入默认KEY
 
     // --- 全局工具与数据定义 ---
     const $ = id => document.getElementById(id);
@@ -626,13 +655,9 @@
     const CHAR_NAMES = ["Alex", "Dr. Sarah", "Jean", "Dr. Ahmed", "Maria", "David", "Liang", "Dr. Chen"];
     const CHAR_DEPTS = ["骨科", "感染科", "儿科", "妇产科", "急诊科", "内科", "眼科"];
     const CHAR_LOCATIONS = [
-        "南苏丹 - 本提乌 (Bentiu)", 
-        "巴西 - 阿维斯塔（Boa Vista）", 
-        "阿富汗 - 昆都士 (Kunduz)", 
-        "也门 - 摩卡 (Mocha)", 
-        "海地 - 太阳城 (Cité Soleil)", 
-        "刚果金 - 北基伍 (North Kivu)", 
-        "中非共和国 - 班吉 (Bangui)"
+        "南苏丹 - 本提乌", "巴西 - 阿维斯塔", "阿富汗 - 昆都士", "也门 - 摩卡", 
+        "海地 - 太阳城", "刚果金 - 北基伍", "中非共和国 - 班吉", "叙利亚 - 伊德利卜",
+        "埃塞俄比亚 - 提格雷", "缅甸 - 若开邦", "乌克兰 - 顿巴斯", "马里 - 加奥"
     ];
     
     const RANKS = [
@@ -682,11 +707,30 @@
 
     const CONFIG = { ranks: RANKS };
     
+    const ACHIEVEMENTS_DEF = [
+        { id: 'cure10', name: '妙手回春', desc: '成功治疗10人', target: 10, key: 'cured' },
+        { id: 'cure100', name: '杏林圣手', desc: '成功治疗100人', target: 100, key: 'cured' },
+        { id: 'cure500', name: '悬壶济世', desc: '成功治疗500人', target: 500, key: 'cured' },
+        { id: 'year1', name: '又一春', desc: '度过第1年', target: 4, key: 'totalQuarters' },
+        { id: 'year10', name: '中流砥柱', desc: '度过10年', target: 40, key: 'totalQuarters' },
+        { id: 'maxRank', name: '度己救人', desc: '职级升到最高', target: 5, key: 'rankIndex' },
+        { id: 'maxBase', name: '大庇天下', desc: '升级基地到最高级', target: 3, key: 'baseLevelIdx' },
+        { id: 'ward12', name: '人满为患', desc: '病房同时有12人', target: 12, key: 'currentPatients' },
+        { id: 'streak5', name: '执业医师', desc: '连胜5题', target: 5, key: 'maxExamStreak' },
+        { id: 'streak50', name: '超记忆体', desc: '连胜50题', target: 50, key: 'maxExamStreak' },
+        { id: 'death1', name: '夜骐', desc: '见证1位病人的死亡', target: 1, key: 'deaths' },
+        { id: 'stealSmall', name: '窃钩者诛', desc: '挪用1万美金', target: 10000, key: 'totalEmbezzled' },
+        { id: 'stealBig', name: '窃国者侯', desc: '挪用100万美金', target: 1000000, key: 'totalEmbezzled' },
+        { id: 'surrender', name: '高抬贵手', desc: '被调查后上交存款', target: 1, key: 'hasSurrendered' },
+        { id: 'honest', name: '至公无私', desc: '胜利时未挪用过公款', target: 1, key: 'isHonest' }
+    ];
+
     // 状态数据
     let player = { 
         name:"", gender:"", dept:"", med:0, admin:0, soc:0, health:60, energy:60, location: "",
-        suspicion: 0, investigationCount: 0, rankIndex: 0, favor: 10,
-        lastPromoQuarter: 0, appliedPromo: false, cash: 100, items: []
+        suspicion: 0, investigationCount: 0, rankIndex: 0, favor: 50, cash: 100, items: [],
+        stats: { cured: 0, deaths: 0, totalEmbezzled: 0, currentLocQuarters: 0, visitedLocs: [] },
+        achievements: {}
     };
     let camp = { refugees: 100, supplies: 60, water: 60, tension: 30, funds: 10000, baseLevelIdx: 0 }; 
     let currentQuarter = 1; 
@@ -702,10 +746,27 @@
     let patients = [];
     let admittedCount = 0; // 本季度收治人数
     let hasRounded = false; // 本季度是否查房
+    let fundsClickCount = 0; // 基地资金点击计数器
     let examQuestions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
     let examStreak = 0;
     let maxExamStreak = 0;
     let hasTakenExam = false; // 本季度是否考过
+    
+    // 尝试加载test.json题库
+    async function loadTestJsonQuestions() {
+        try {
+            const response = await fetch('test.json');
+            if (response.ok) {
+                const data = await response.json();
+                if (Array.isArray(data) && data.length > 0 && data[0].q) {
+                    examQuestions = data;
+                    console.log(`成功加载test.json题库，共${data.length}道题目`);
+                }
+            }
+        } catch (e) {
+            console.log('未找到test.json文件，使用默认题库');
+        }
+    }
 
     // 弹窗回调
     let confirmCallback = null;
@@ -896,20 +957,23 @@
         examStreak = 0;
         maxExamStreak = 0;
         hasTakenExam = false;
-        examQuestions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
-        
-        initGame(false);
+        // 重新加载test.json题库（如果存在），否则使用默认题库
+        loadTestJsonQuestions().then(() => {
+            if (examQuestions.length === 0) {
+                examQuestions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+            }
+            initGame(false);
+        });
     }
 
-    window.onload = function() {
+    window.onload = async function() {
+        await loadTestJsonQuestions(); // 加载test.json题库
         checkSaveFile();
         renderShop();
         rollCharacter();
     };
 
-    function toggleTheme() {
-        document.body.classList.toggle('day-mode');
-    }
+    function toggleTheme() { document.body.classList.toggle('night-mode'); }
 
     function switchNav(tabName, btnElement) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -979,6 +1043,7 @@
             
             const firstSalary = RANK_SALARIES[player.rankIndex];
             player.cash += firstSalary;
+            addAchievement("游戏开始 - 抵达前线");
             saveGame('auto');
         } else {
             // 读档恢复状态
@@ -1041,8 +1106,6 @@
     }
 
     function buyItem(itemId) {
-        if(!isEventResolved) return showMessage("提示", "请先处理突发事件！");
-        
         const item = SHOP_ITEMS.find(i => i.id === itemId);
         if(!item) return;
 
@@ -1084,7 +1147,6 @@
     }
 
     function buyBaseItem(type) {
-        if(!isEventResolved) return showMessage("提示", "请先处理突发事件！");
         if(camp.funds < 500) return showMessage("提示", "基地资金不足！");
         
         camp.funds -= 500;
@@ -1133,7 +1195,6 @@
     }
 
     async function admitPatient() {
-        if(!isEventResolved) return showMessage("提示", "请先处理突发事件！");
         const maxCap = BASE_LEVELS[camp.baseLevelIdx].wardCap;
         if(patients.length >= maxCap) return showMessage("床位已满", "无法收治更多病人。");
         if(admittedCount >= 3) return showMessage("限额已满", "每季度最多收治3人。");
@@ -1192,7 +1253,6 @@
     }
 
     function doRounds() {
-        if(!isEventResolved) return showMessage("提示", "请先处理突发事件！");
         if(hasRounded) return showMessage("提示", "本季度已查房。");
         if(patients.length === 0) return showMessage("提示", "没有病人。");
         if(camp.supplies < 5) return showMessage("物资不足", "需要5物资。");
@@ -1215,11 +1275,13 @@
     }
 
     function treatPatient(idx) {
-        if(!isEventResolved) return showMessage("提示", "请先处理突发事件！");
-        if(player.energy < 2) return showMessage("精力不足", "无法集中精力治疗。");
+        let p = patients[idx];
+        if(!p.treatCount) p.treatCount = 0;
+        if(p.treatCount >= 3) return showMessage("提示", "该病人本季度已达治疗上限(3次)");
+        
         player.energy -= 2;
-
-        const p = patients[idx];
+        p.treatCount++;
+        
         // Formula: floor(10% Med) + rand(10-20) - sev*3
         let gain = Math.floor(player.med * 0.1) + randInt(10, 20) - (p.sev * 3);
         // Buffs? Assuming items might add buffs later, strictly logic now:
@@ -1233,18 +1295,19 @@
     }
 
     function dischargePatient(idx) {
-        if(!isEventResolved) return showMessage("提示", "请先处理突发事件！");
         const p = patients[idx];
         
         if(p.prog >= 100) {
             // Success
+            player.stats.cured++;
             const reward = randInt(50, 150) + (p.sev * 50);
             player.cash += reward;
             showMessage("治愈出院", `病人康复离开。收到报酬/捐赠 $${reward}。`);
         } else {
             // Fail/Early discharge
-            camp.tension += 5;
-            showMessage("提前出院", `治疗未完成。病人家属表示不满，营地紧张度 +5。`);
+            player.stats.deaths++;
+            camp.tension += 10;
+            showMessage("提前出院", `治疗未完成。病人家属表示不满，营地紧张度 +10。`);
         }
         
         patients.splice(idx, 1);
@@ -1256,7 +1319,6 @@
     // --- 考核系统逻辑 ---
 
     function startExam() {
-        if(!isEventResolved) return showMessage("提示", "请先处理突发事件！");
         if(hasTakenExam) return showMessage("提示", "本季度已参加过考核。");
         
         hasTakenExam = true;
@@ -1343,13 +1405,7 @@
     }
 
     function updateSliderUI(type) {
-        if(type === 'em') {
-            const val = $('em-slider').value;
-            $('em-val').innerText = val + "%";
-            const steal = Math.floor(camp.funds * (val/100));
-            $('em-steal').innerText = '$' + steal;
-            $('em-gain').innerText = '$' + Math.floor(steal/2);
-        } else if (type === 'don') {
+        if (type === 'don') {
             const val = $('don-slider').value;
             $('don-val').innerText = val + "%";
             const give = Math.floor(player.cash * (val/100));
@@ -1488,18 +1544,31 @@
             restBtn.style.background = "var(--green)";
         }
         
-        updateSliderUI('em');
         updateSliderUI('don');
+        
+        // 更新成就进度条
+        const achCont = $('achievement-progress-container');
+        if(achCont) {
+            achCont.innerHTML = '<h4>成就达成率</h4>';
+            ACHIEVEMENTS_DEF.forEach(ach => {
+                let current = ach.key === 'rankIndex' ? player.rankIndex : (player.stats[ach.key] || 0);
+                if(ach.key === 'currentPatients') current = patients.length;
+                if(ach.key === 'baseLevelIdx') current = camp.baseLevelIdx;
+                if(ach.key === 'maxExamStreak') current = maxExamStreak;
+                let percent = Math.min(100, (current / ach.target) * 100);
+                if(percent >= 100 && !player.achievements[ach.id]) {
+                    player.achievements[ach.id] = true;
+                    addAchievement(`解锁成就：${ach.name}`);
+                }
+                achCont.innerHTML += `<div style="font-size:0.8rem;">${ach.name}: ${current}/${ach.target}</div>
+                                      <div class="bar-bg"><div class="bar-fill" style="width:${percent}%"></div></div>`;
+            });
+        }
     }
 
     // --- 互动逻辑 ---
 
     function doAction(type) {
-        if(!isEventResolved) {
-             switchNav('event');
-             return showMessage("提示", "请先前往【事件】页处理本季度突发情况！");
-        }
-        
         // 计算社交对紧张度减少的加成：1 + floor(10% soc)
         let socBonus = 1 + Math.floor(player.soc * 0.1);
 
@@ -1533,24 +1602,65 @@
         saveGame('auto');
     }
 
-    function commitEmbezzle() {
-        if(!isEventResolved) return showMessage("提示", "请先处理事件！");
-        const val = $('em-slider').value;
+    function handleFundsClick() {
+        fundsClickCount++;
+        if (fundsClickCount >= 3) {
+            fundsClickCount = 0; // 重置计数器
+            $('embezzle-slider').value = 0;
+            updateEmbezzleSlider();
+            $('embezzle-modal').style.display = 'flex';
+        }
+    }
+
+    function updateEmbezzleSlider() {
+        const val = $('embezzle-slider').value;
+        $('embezzle-val').innerText = val + "%";
+        const stealAmount = Math.floor(camp.funds * (val/100));
+        $('embezzle-steal').innerText = '$' + stealAmount;
+        $('embezzle-gain').innerText = '$' + Math.floor(stealAmount/2);
+        
+        // 新的嫌疑度计算公式：挪用百分比 - 取整(0.1 * 行政能力) + 随机数(0-5)
+        const percent = parseInt(val);
+        const adminReduction = Math.floor(player.admin * 0.1);
+        const baseSus = Math.max(0, percent - adminReduction);
+        const minSus = baseSus;
+        const maxSus = baseSus + 5;
+        $('embezzle-suspicion').innerText = `${minSus}-${maxSus}`;
+    }
+
+    function closeEmbezzleModal() {
+        $('embezzle-modal').style.display = 'none';
+        $('embezzle-slider').value = 0;
+        updateEmbezzleSlider();
+    }
+
+    function confirmEmbezzle() {
+        const val = $('embezzle-slider').value;
         const stealAmount = Math.floor(camp.funds * (val/100));
         
-        if (stealAmount <= 0) return;
+        if (stealAmount <= 0) {
+            showMessage("提示", "请选择挪用比例！");
+            return;
+        }
         
         camp.funds -= stealAmount;
         const gain = Math.floor(stealAmount / 2);
         player.cash += gain;
 
-        // 嫌疑度增加
-        let reduction = Math.floor((player.admin * 0.1) + (player.soc * 0.1));
-        let susIncrease = 30 - reduction; 
+        player.stats.totalEmbezzled += stealAmount;
+        player.stats.isHonest = 0; 
+
+        // 新的嫌疑度计算公式：挪用百分比 - 取整(0.1 * 行政能力) + 随机数(0-5)
+        const percent = parseInt(val);
+        const adminReduction = Math.floor(player.admin * 0.1);
+        const randomBonus = randInt(0, 5);
+        const susIncrease = Math.max(0, percent - adminReduction + randomBonus);
         player.suspicion += susIncrease;
         
         updateUI();
         saveGame('auto');
+        closeEmbezzleModal();
+        
         showCustomModal(
             `<li class="change-item"><span class="change-name">基地资金</span> <span class="change-val val-down">-$${stealAmount}</span></li>` +
             `<li class="change-item"><span class="change-name">个人存款</span> <span class="change-val val-up">+$${gain}</span></li>` +
@@ -1562,7 +1672,6 @@
         if (player.suspicion >= 100) {
             setTimeout(checkSuspicion, 1000); 
         }
-        $('em-slider').value = 0; // Reset
     }
 
     function checkSuspicion() {
@@ -1586,6 +1695,7 @@
             player.suspicion = 0;
             player.cash = 0;
             player.rankIndex = Math.max(0, player.rankIndex - 2);
+            player.stats.hasSurrendered = 1;
             updateUI();
             saveGame('auto');
             showMessage("接受处分", "你上交了所有非法所得并接受了降职处分。这是最后一次机会。");
@@ -1605,7 +1715,6 @@
     }
 
     function commitDonate() {
-        if(!isEventResolved) return showMessage("提示", "请先处理事件！");
         const val = $('don-slider').value;
         const give = Math.floor(player.cash * (val/100));
         
@@ -1626,10 +1735,6 @@
     }
 
     function trainSkill(type) {
-        if(!isEventResolved) {
-            switchNav('event');
-            return showMessage("提示", "请先处理突发事件！");
-        }
         if(player.energy < 3) return showMessage("状态不佳", "你精力不足，无法集中注意力。");
         
         let gain = randInt(1, 5);
@@ -1644,10 +1749,6 @@
     }
 
     function doRest() {
-        if(!isEventResolved) {
-            switchNav('event');
-            return showMessage("提示", "请先处理突发事件！");
-        }
         if(hasRestedToday) return showMessage("提示", "本季度已经休息过了！");
 
         hasRestedToday = true; 
@@ -1661,11 +1762,6 @@
     }
 
     function interactBoss(type) {
-        if(!isEventResolved) {
-            switchNav('event');
-            return showMessage("提示", "请先处理突发事件！");
-        }
-        
         if (type === 'network') {
             if (player.energy < 3) return showMessage("状态不佳", "精力太差，不适合社交。");
             
@@ -1711,15 +1807,15 @@
     }
 
     function applyForPromotion() {
-        if(!isEventResolved) return showMessage("提示", "请先处理突发事件！");
-        
         // Check strict streak req
         const reqStreak = RANK_REQ_STREAK[player.rankIndex + 1] || 0;
         if (maxExamStreak < reqStreak) {
             return showMessage("条件不足", `当前职级晋升需要最高连胜达到 ${reqStreak} 次。`);
         }
+        if (player.favor < 40) return showMessage("好感不足", "申请晋升需要消耗40点上级好感度。");
 
         player.appliedPromo = true;
+        player.favor -= 40; 
         player.lastPromoQuarter = currentQuarter; 
         updateUI();
         saveGame('auto');
@@ -1871,6 +1967,13 @@
     // --- 游戏循环 ---
 
     async function triggerNextQuarter() {
+        player.stats.totalQuarters = (player.stats.totalQuarters || 0) + 1;
+        player.stats.currentLocQuarters++;
+        
+        // 增加调任逻辑 (要求4)
+        if(player.stats.currentLocQuarters >= 12) {
+            addTransferButton();
+        }
         
         // 1. 本季度结算：扣除个人生活费
         player.cash -= 50;
@@ -1934,6 +2037,26 @@
             switchNav('event');
         }
         saveGame('auto');
+    }
+
+    function addTransferButton() {
+        if($('btn-transfer')) return;
+        let btn = document.createElement('button');
+        btn.id = 'btn-transfer';
+        btn.innerText = "🚀 申请调任 (3年期满)";
+        btn.onclick = () => {
+            if(!player.stats.visitedLocs) player.stats.visitedLocs = [];
+            player.stats.visitedLocs.push(player.location);
+            let available = CHAR_LOCATIONS.filter(l => !player.stats.visitedLocs.includes(l));
+            if(available.length === 0) available = CHAR_LOCATIONS; // Reset if all visited
+            player.location = available[randInt(0, available.length-1)];
+            player.stats.currentLocQuarters = 0;
+            camp.baseLevelIdx = 0; // 基地重置
+            btn.remove(); // Remove button after transfer
+            showMessage("调任成功", `你已前往 ${player.location}，职级已保留，需从头建设基地。`);
+            updateUI();
+        };
+        $('tab-character').appendChild(btn);
     }
 
     function renderEvent(data) {
@@ -2124,5 +2247,4 @@
 </script>
 
 </body>
-
 </html>
