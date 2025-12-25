@@ -696,7 +696,7 @@
         "副总筹 (Level 5)",
         "区域总筹 (Level 6)"
     ];
-    const RANK_SALARIES = [100, 400, 800, 1200, 1600, 2000];
+    const RANK_SALARIES = [200, 500, 800, 1000, 1500, 2000];
     const RANK_REQ_STREAK = [0, 3, 5, 10, 15, 20]; // 对应 1->2, 2->3 等
 
     const BASE_LEVELS = [
@@ -1250,6 +1250,7 @@
             let locName = player.location ? player.location.split(' - ')[0] : "未知区域";
             addLog(`> 加密连接至指挥部: ${locName}...`); await wait(800); 
             addLog("> 正在下载人员档案...");
+            addLog("> 正在加载图片..."); await wait(300);
             
             try {
                 const bioText = await generateBio();
@@ -1276,6 +1277,9 @@
     }
 
     function startGameUI(isLoad) {
+        // 先更新UI，确保人物信息正确显示
+        updateUI();
+        
         $('loading-screen').classList.remove('active');
         $('game-screen').classList.add('active');
         $('bottom-nav').style.display = 'grid'; // 显示底部导航
