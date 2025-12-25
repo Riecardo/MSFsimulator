@@ -73,25 +73,10 @@
         .sys-btn { padding: 4px 8px; font-size: 0.8rem; background: var(--input-bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; }
         .sys-btn:hover { background: var(--accent); color: white; }
 
-        .header-center { 
-            font-size: 1.1rem; font-weight: bold; color: var(--danger); 
-            border: 2px solid var(--danger); padding: 5px 15px; border-radius: 20px; 
-            background: rgba(231, 76, 60, 0.1); 
-            animation: heartbeat 2s infinite; 
-            text-align: center;
-        }
-        @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
         h1 { margin: 0; font-size: 1.6rem; color: var(--text); }
         #game-location-display { font-size: 0.95rem; color: var(--accent); font-weight: bold; margin-top: 5px; display: none; animation: fadeIn 1s; }
         
         .day-counter { background: var(--border); color: var(--text); padding: 5px 10px; border-radius: 4px; font-weight: bold; height: fit-content; border: 1px solid var(--text); min-width: 80px; text-align: center; }
-
-        #theme-toggle {
-            position: absolute; top: 10px; right: 10px; z-index: 100;
-            background: rgba(0,0,0,0.5); border: 1px solid var(--text); color: var(--text);
-            padding: 5px; font-size: 1rem; margin: 0; width: auto; border-radius: 50%;
-        }
 
         /* 界面切换 */
         .screen { display: none; animation: fadeIn 0.5s; padding-bottom: 20px; }
@@ -325,44 +310,35 @@
 </head>
 <body>
 
-<button id="theme-toggle" onclick="toggleTheme()">☀/🌙</button>
-
 <div class="container">
     <header>
         <div class="header-left">
             <div class="system-btns">
                 <button class="sys-btn" id="exit-game-btn" onclick="tryExitGame()">🚪 退出</button>
-                <button class="sys-btn" onclick="saveGameManual()">💾 存档</button>
-                <button class="sys-btn" onclick="openLoadModal()">📂 读档</button>
+                <button class="sys-btn" onclick="openSettingsModal()">⚙️ 设置</button>
             </div>
             <h1>🚑 前线指挥官 <span style="font-size:0.6em; color:#888">MSF</span></h1>
             <div id="game-location-display">📍 ???</div>
         </div>
-        
-        <div class="header-center">⚠ 危险度 <span id="val-danger">5</span></div>
 
         <div class="day-counter" id="day-display">第1年 春</div>
     </header>
 
     <div id="setup-screen" class="screen active">
-        <div class="input-group" style="margin-bottom: 20px;">
-            <h3>📡 总部通讯设置</h3>
-            
-            <p style="font-size:0.8em; color:#888;">开发者API Key已预装。如需使用自己的Key请在下方输入。</p>
-            <label style="font-size:0.9em; font-weight:bold;">API Base URL:</label>
-            <input type="text" id="api-url" value="https://api.deepseek.com">
-
-            <label style="font-size:0.9em; font-weight:bold; margin-top:10px; display:block;">自定义API Key (可选):</label>
-            <input type="password" id="api-key" placeholder="不填则使用默认Key...">
-            
-            <label style="font-size:0.9em; font-weight:bold; margin-top:10px; display:block;">模型版本:</label>
-            <input type="text" id="model-name" value="deepseek-reasoner" placeholder="deepseek-reasoner">
-            
-            <div style="margin-top:15px;">
-                <input type="checkbox" id="use-mock" onchange="toggleApiInput()"> 
-                <label for="use-mock">离线模拟模式 (无 Key 可玩)</label>
+        <div class="story-intro" style="background:linear-gradient(135deg, rgba(44,62,80,0.95), rgba(52,73,94,0.9)); border:1px solid var(--border); border-radius:8px; padding:20px; margin-bottom:20px; position:relative; overflow:hidden;">
+            <div style="position:absolute; top:0; right:0; font-size:4rem; opacity:0.1; transform:translate(10%, -20%);">🏥</div>
+            <h3 style="margin:0 0 15px 0; color:var(--gold); font-size:1.2rem; letter-spacing:2px;">📜 战地档案 · 序章</h3>
+            <p style="font-size:0.95rem; line-height:1.9; color:#ccc; margin:0; text-align:justify; text-indent:2em;">
+                步入二十一世纪，世界并未如人们期望的那样走向和平。在南苏丹的难民营里，枪声与婴儿的啼哭交织；在也门的废墟间，医疗帐篷是方圆百里唯一的光。无国界医生组织（MSF）的志愿者们，穿梭于被遗忘的角落，用听诊器对抗炮火，以手术刀守护最后的底线。
+            </p>
+            <p style="font-size:0.95rem; line-height:1.9; color:#ccc; margin:15px 0 0 0; text-align:justify; text-indent:2em;">
+                你即将成为他们中的一员。在资源匮乏的前线营地，你要救治伤患、管理物资、安抚难民、应对突发危机。每一个决定都关乎生死，每一次选择都考验人性。从一名普通医疗专员做起，凭借医术与智慧晋升至最高职级——这是你的使命，也是你的救赎。
+            </p>
+            <div style="margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.85rem; color:var(--gold); text-align:center;">
+                🎯 <strong>游戏目标</strong>：活下去，坚持住，在战火中守护生命与希望。
             </div>
         </div>
+
         <div class="input-group">
             <h3>🪪 志愿申请表</h3>
             
@@ -393,6 +369,26 @@
                 <button id="continue-btn" class="setup-main-btn" onclick="openLoadModal()" style="display:none; background:var(--green); color:white; border:2px solid var(--text);">🔄 继续游戏 (检测到存档)</button>
             </div>
         </div>
+
+        <details style="margin-top:20px; border:1px solid var(--border); border-radius:4px; background:var(--panel);">
+            <summary style="padding:12px 15px; cursor:pointer; color:#888; font-size:0.9rem;">📡 高级设置 (API配置)</summary>
+            <div style="padding:15px; border-top:1px solid var(--border);">
+                <p style="font-size:0.8em; color:#888; margin-bottom:10px;">开发者API Key已预装。如需使用自己的Key请在下方输入。</p>
+                <label style="font-size:0.85em; font-weight:bold;">API Base URL:</label>
+                <input type="text" id="api-url" value="https://api.deepseek.com" style="margin-bottom:10px;">
+
+                <label style="font-size:0.85em; font-weight:bold;">自定义API Key (可选):</label>
+                <input type="password" id="api-key" placeholder="不填则使用默认Key..." style="margin-bottom:10px;">
+                
+                <label style="font-size:0.85em; font-weight:bold;">模型版本:</label>
+                <input type="text" id="model-name" value="deepseek-reasoner" placeholder="deepseek-reasoner" style="margin-bottom:10px;">
+                
+                <div style="margin-top:5px;">
+                    <input type="checkbox" id="use-mock" onchange="toggleApiInput()"> 
+                    <label for="use-mock" style="font-size:0.85em;">离线模拟模式 (无 Key 可玩)</label>
+                </div>
+            </div>
+        </details>
     </div>
 
     <div id="loading-screen" class="screen">
@@ -735,6 +731,98 @@
         <div class="modal-body">
             <p id="special-event-desc" style="margin-bottom:20px; line-height:1.6;"></p>
             <div id="special-event-choices" style="display:flex; flex-direction:column;"></div>
+        </div>
+    </div>
+</div>
+
+<div id="settings-modal" class="custom-modal">
+    <div class="modal-content" style="max-width:600px; max-height:90vh; overflow-y:auto;">
+        <div class="modal-header" style="background:var(--panel); color:var(--text);">⚙️ 游戏设置</div>
+        <div class="modal-body" style="text-align:left;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">
+                <button class="modal-btn" onclick="saveGameManual(); closeSettingsModal();">💾 手动存档</button>
+                <button class="modal-btn secondary" onclick="closeSettingsModal(); openLoadModal();">📂 读取存档</button>
+            </div>
+            <div style="margin-bottom:20px;">
+                <button class="modal-btn" style="width:100%;" onclick="toggleTheme();">☀️/🌙 切换日间/夜间模式</button>
+            </div>
+            <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;">
+            <div id="tutorial-section">
+                <h4 style="margin:0 0 15px 0; color:var(--gold);">📖 新手教程</h4>
+                <div style="font-size:0.9rem; line-height:1.8; color:#aaa;">
+                    <details open style="margin-bottom:15px;">
+                        <summary style="font-weight:bold; color:var(--text); cursor:pointer; margin-bottom:10px;">🎮 游戏简介</summary>
+                        <p>你是一名无国界医生组织（MSF）的医疗志愿者，被派往战乱或灾难地区执行人道主义救援任务。你需要管理营地资源、救治病患、应对突发事件，并在这个过程中提升自己的能力和职级。</p>
+                    </details>
+                    
+                    <details style="margin-bottom:15px;">
+                        <summary style="font-weight:bold; color:var(--text); cursor:pointer; margin-bottom:10px;">📊 核心数值</summary>
+                        <p><strong>个人属性：</strong></p>
+                        <ul style="margin-left:20px;">
+                            <li><strong>医学</strong> - 影响治疗病人的效果</li>
+                            <li><strong>行政</strong> - 降低基地运营成本</li>
+                            <li><strong>社交</strong> - 安抚难民更有效，减少紧张度</li>
+                            <li><strong>健康/精力</strong> - 执行行动的消耗，可通过休息恢复</li>
+                        </ul>
+                        <p style="margin-top:10px;"><strong>营地属性：</strong></p>
+                        <ul style="margin-left:20px;">
+                            <li><strong>难民</strong> - 营地收容的难民数量</li>
+                            <li><strong>物资/净水</strong> - 维持营地运转的资源，每季度自然消耗</li>
+                            <li><strong>紧张度</strong> - 过高会导致游戏失败</li>
+                            <li><strong>基地资金</strong> - 用于运营和扩建基地</li>
+                        </ul>
+                    </details>
+                    
+                    <details style="margin-bottom:15px;">
+                        <summary style="font-weight:bold; color:var(--text); cursor:pointer; margin-bottom:10px;">🏥 病房系统</summary>
+                        <p>你可以收治病人并进行治疗。每位病人有：</p>
+                        <ul style="margin-left:20px;">
+                            <li><strong>危急度</strong> - 分为轻症/中症/重症</li>
+                            <li><strong>生命指征</strong> - 每季度自然衰减，降至0则死亡</li>
+                            <li><strong>诊疗进度</strong> - 达到100%可治愈出院</li>
+                        </ul>
+                        <p style="margin-top:10px;"><strong>操作：</strong>治疗(提升进度和生命指征)、抢救(生命指征≤30时可用)、出院</p>
+                    </details>
+                    
+                    <details style="margin-bottom:15px;">
+                        <summary style="font-weight:bold; color:var(--text); cursor:pointer; margin-bottom:10px;">📈 晋升系统</summary>
+                        <p>通过参加考核获得连胜来晋升职级：</p>
+                        <ul style="margin-left:20px;">
+                            <li>Lv.2 需要连胜 3 题</li>
+                            <li>Lv.3 需要连胜 5 题</li>
+                            <li>Lv.4 需要连胜 10 题</li>
+                            <li>Lv.5 需要连胜 15 题</li>
+                            <li>Lv.6 需要连胜 20 题</li>
+                        </ul>
+                        <p style="margin-top:10px;">晋升需在<strong>秋季</strong>申请，消耗<strong>40点好感度</strong>，冬季公布结果。</p>
+                    </details>
+                    
+                    <details style="margin-bottom:15px;">
+                        <summary style="font-weight:bold; color:var(--text); cursor:pointer; margin-bottom:10px;">⚠️ 游戏结束条件</summary>
+                        <p><strong>失败条件：</strong></p>
+                        <ul style="margin-left:20px;">
+                            <li>营地紧张度达到100%</li>
+                            <li>基地资金耗尽</li>
+                            <li>个人存款为负且无法维持</li>
+                            <li>嫌疑度过高被调查定罪</li>
+                        </ul>
+                        <p style="margin-top:10px;"><strong>胜利条件：</strong>晋升至最高职级(Lv.6)并稳定维持3个季度以上。</p>
+                    </details>
+                    
+                    <details style="margin-bottom:15px;">
+                        <summary style="font-weight:bold; color:var(--text); cursor:pointer; margin-bottom:10px;">💡 小贴士</summary>
+                        <ul style="margin-left:20px;">
+                            <li>物资和净水每季度会自然消耗，记得及时补充</li>
+                            <li>与上级保持良好关系，好感度是晋升的关键</li>
+                            <li>挪用公款会增加嫌疑度，风险自负</li>
+                            <li>重症病人生命指征衰减快，优先处理</li>
+                            <li>每季度只能休息一次，合理规划精力</li>
+                        </ul>
+                    </details>
+                </div>
+            </div>
+            <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;">
+            <button class="modal-btn" style="width:100%;" onclick="closeSettingsModal()">关 闭</button>
         </div>
     </div>
 </div>
@@ -1135,6 +1223,14 @@
     };
 
     function toggleTheme() { document.body.classList.toggle('night-mode'); }
+    
+    function openSettingsModal() {
+        $('settings-modal').style.display = 'flex';
+    }
+    
+    function closeSettingsModal() {
+        $('settings-modal').style.display = 'none';
+    }
 
     function switchNav(tabName, btnElement) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -1677,7 +1773,6 @@
         const timeInfo = getSeasonInfo();
         $('day-display').innerText = `第${timeInfo.year}年 ${timeInfo.season}`;
         
-        $('val-danger').innerText = dangerLevel; 
         $('val-refugees').innerText = camp.refugees;
         $('val-funds').innerText = '$' + camp.funds;
         $('val-cash-char').innerText = '$' + player.cash;
