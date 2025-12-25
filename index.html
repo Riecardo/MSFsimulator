@@ -228,12 +228,10 @@
                     <div style="font-size:1rem; margin-bottom:5px;">考核连胜: <span id="val-max-streak" style="color:var(--gold); font-weight:bold;">0</span></div>
                     <div style="font-size:1rem; color:#2ecc71; margin-bottom:10px;">季度薪水: <span id="val-salary-promo"></span></div>
                     
-                    <div class="rank-actions">
+                    <div class="rank-actions" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
                         <button style="font-size:0.9rem; padding:8px;" onclick="interactBoss('network')">🤝 联络感情</button>
-                        <div style="display:flex; gap:5px;">
-                            <button style="font-size:0.9rem; padding:8px; flex:1;" onclick="interactBoss('fund')">💰 请求资金</button>
-                            <button style="font-size:0.9rem; padding:8px; flex:1;" onclick="interactBoss('bribe')">🤝 贿赂</button>
-                        </div>
+                        <button style="font-size:0.9rem; padding:8px;" onclick="interactBoss('fund')">💰 请求资金</button>
+                        <button style="font-size:0.9rem; padding:8px;" onclick="interactBoss('bribe')">🤝 贿赂</button>
                     </div>
                     <button id="btn-promo" style="width:100%; margin-top:10px; background:var(--blue); color:white;" onclick="applyForPromotion()">⬆️ 申请晋升</button>
                     <div id="promo-status" style="font-size:0.8em; color:#888; margin-top:5px;"></div>
@@ -329,15 +327,17 @@
                     <div style="flex:1; display:flex; flex-direction:column;">
                         <div style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">基地资金: <span id="val-funds-procure" style="color:var(--gold);">$0</span></div>
                         <div class="stat-box" style="margin-bottom:10px; padding:5px; background:none; border:none;">📦 物资 <span style="float:right;" id="val-supplies-procure">0%</span><div class="bar-bg" style="height:6px;"><div class="bar-fill" id="bar-supplies-procure"></div></div></div>
-                        <div class="stat-box" style="margin-bottom:15px; padding:5px; background:none; border:none;">💧 净水 <span style="float:right;" id="val-water-procure">0%</span><div class="bar-bg" style="height:6px;"><div class="bar-fill" id="bar-water-procure"></div></div></div>
-                        
-                        <h4 style="margin:0 0 10px 0; color:var(--green); font-size:1rem;">💰 捐赠支持</h4>
-                        <div class="slider-container" style="border-left:4px solid var(--green); margin:0;">
-                            <div style="margin-bottom:5px;">🤝 捐赠个人资金 <span id="don-val" class="slider-val">0%</span></div>
-                            <input type="range" id="don-slider" min="0" max="100" value="0" oninput="updateSliderUI('don')">
-                            <div style="font-size:0.8em; color:#aaa;">个人捐出 <span id="don-give">$0</span> -> 基地获得 <span id="don-get">$0</span></div>
-                            <button class="action-btn" style="margin-top:5px; justify-content:center; border-color:var(--green); padding:8px;" onclick="commitDonate()">确认捐赠</button>
-                        </div>
+                        <div class="stat-box" style="padding:5px; background:none; border:none;">💧 净水 <span style="float:right;" id="val-water-procure">0%</span><div class="bar-bg" style="height:6px;"><div class="bar-fill" id="bar-water-procure"></div></div></div>
+                    </div>
+                </div>
+                
+                <div style="background:var(--panel); padding:15px; border-radius:8px; border:1px solid var(--border); margin-bottom:20px;">
+                    <h4 style="margin:0 0 10px 0; color:var(--green); font-size:1rem;">💰 捐赠支持</h4>
+                    <div class="slider-container" style="border-left:4px solid var(--green);">
+                        <div style="margin-bottom:5px;">🤝 捐赠个人资金 <span id="don-val" class="slider-val">0%</span></div>
+                        <input type="range" id="don-slider" min="0" max="100" value="0" oninput="updateSliderUI('don')">
+                        <div style="font-size:0.8em; color:#aaa;">个人捐出 <span id="don-give">$0</span> -> 基地获得 <span id="don-get">$0</span></div>
+                        <button class="action-btn" style="margin-top:5px; justify-content:center; border-color:var(--green); padding:8px;" onclick="commitDonate()">确认捐赠</button>
                     </div>
                 </div>
 
@@ -1146,7 +1146,27 @@
         saveGame('auto');
     }
 
+    // --- 图片预加载 ---
+    function preloadImages() {
+        const imagesToPreload = [
+            'image/work1.png',
+            'image/place.png',
+            // 基地等级图片 (1-4)
+            'image/base1.png', 'image/base2.png', 'image/base3.png', 'image/base4.png',
+            // 补给站图片 (1-4)
+            'image/supply1.png', 'image/supply2.png', 'image/supply3.png', 'image/supply4.png',
+            // 病房图片 (1-4)
+            'image/ward1.png', 'image/ward2.png', 'image/ward3.png', 'image/ward4.png'
+        ];
+        
+        imagesToPreload.forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
+    }
+
     window.onload = function() {
+        preloadImages(); // 预加载所有图片
         loadtestDataQuestions(); // 加载test.js中的testData题库
         checkSaveFile();
         renderShop();
@@ -2249,8 +2269,9 @@
     }
 
     async function generateBio() {
-        const prompt = `你是一个小说家。背景：${player.location} 的无国界医生(MSF)营地。人物：${player.name}，${player.gender}，科室：【${player.dept}】。参考数值：医学${player.med}，行政${player.admin}，社交${player.soc}。\n请生成一段约150字的人物介绍，内容必须紧扣其【${player.dept}】的专业背景，禁止出现具体数值，使用生活化阶梯描述。`;
-        if($('use-mock').checked) { await wait(1000); return `（模拟模式）这里是前线。作为一名${player.dept}医生，他冷静而果敢，专业技能是他在地狱中唯一的信仰。`; }
+        const playerName = player.name || (player.lastName + player.firstName) || "医生";
+        const prompt = `你是一个小说家。背景：${player.location} 的无国界医生(MSF)营地。人物：${playerName}，${player.gender}，科室：【${player.dept}】。参考数值：医学${player.med}，行政${player.admin}，社交${player.soc}。\n请生成一段约150字的人物介绍，内容必须紧扣其【${player.dept}】的专业背景，禁止出现具体数值，使用生活化阶梯描述。人物名字必须使用【${playerName}】。`;
+        if($('use-mock').checked) { await wait(1000); return `（模拟模式）这里是前线。${playerName}作为一名${player.dept}医生，他冷静而果敢，专业技能是他在地狱中唯一的信仰。`; }
         return await callDeepSeek(prompt, false);
     }
 
