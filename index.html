@@ -4,308 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>无国界医生：前线指挥官 (DeepSeek R1版)</title>
-    <style>
-        /* 日夜模式变量定义 */
-        :root {
-            /* 夜间模式 (默认) */
-            --bg: #121212;
-            --panel: #1e1e1e;
-            --text: #e0e0e0;
-            --primary: #ff4d4d;
-            --accent: #d35400;
-            --green: #2ecc71;
-            --blue: #3498db;
-            --gold: #f1c40f;
-            --purple: #9b59b6;
-            --border: #333;
-            --input-bg: #2d2d2d;
-            --bio-bg: #2a2520;
-            --bio-text: #bdc3c7;
-            --hover: #333;
-            --danger: #e74c3c;
-            --nav-height: 60px;
-        }
-
-        /* 日间模式类 */
-        body:not(.night-mode) { /* 默认改为日间模式逻辑 */
-            --bg: #fdf6e3;
-            --panel: #ffffff;
-            --text: #333333;
-            --primary: #EE0000;
-            --accent: #e67e22;
-            --green: #27ae60;
-            --blue: #2980b9;
-            --gold: #f39c12;
-            --purple: #8e44ad;
-            --border: #ddd;
-            --input-bg: #eee;
-            --bio-bg: #fff8e1;
-            --bio-text: #5d4037;
-            --hover: #fffdf5;
-            --danger: #c0392b;
-        }
-        body.night-mode { /* 切换类改为夜间 */
-            --bg: #121212;
-            --panel: #1e1e1e;
-            --text: #e0e0e0;
-            --primary: #ff4d4d;
-            --accent: #d35400;
-            --green: #2ecc71;
-            --blue: #3498db;
-            --gold: #f1c40f;
-            --purple: #9b59b6;
-            --border: #333;
-            --input-bg: #2d2d2d;
-            --bio-bg: #2a2520;
-            --bio-text: #bdc3c7;
-            --hover: #333;
-            --danger: #e74c3c;
-        }
-
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; transition: background 0.3s, color 0.3s; padding-bottom: var(--nav-height); }
-        .container { max-width: 800px; margin: 0 auto; background: var(--panel); padding: 20px; min-height: 100vh; box-sizing: border-box; position: relative; }
-        
-        /* 头部与状态 */
-        header { border-bottom: 3px solid var(--primary); padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .header-left { display: flex; flex-direction: column; gap: 5px; }
-        
-        .system-btns { display: flex; gap: 8px; margin-bottom: 5px; }
-        .sys-btn { padding: 4px 8px; font-size: 0.8rem; background: var(--input-bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; }
-        .sys-btn:hover { background: var(--accent); color: white; }
-
-        h1 { margin: 0; font-size: 1.6rem; color: var(--text); }
-        #game-location-display { font-size: 0.95rem; color: var(--accent); font-weight: bold; margin-top: 5px; display: none; animation: fadeIn 1s; }
-        
-        .day-counter { background: var(--border); color: var(--text); padding: 5px 10px; border-radius: 4px; font-weight: bold; height: fit-content; border: 1px solid var(--text); min-width: 80px; text-align: center; }
-
-        /* 界面切换 */
-        .screen { display: none; animation: fadeIn 0.5s; padding-bottom: 20px; }
-        .screen.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* 加载界面 */
-        #loading-screen { text-align: center; padding-top: 50px; }
-        .loader-content { display: inline-block; text-align: left; background: #000; color: #0f0; padding: 20px; border-radius: 5px; font-family: 'Courier New', Courier, monospace; width: 80%; max-width: 400px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .loader-spinner { border: 4px solid #333; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .log-line { margin: 5px 0; opacity: 0; animation: typeIn 0.5s forwards; }
-        @keyframes typeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 按钮体系 */
-        button { background: var(--border); color: var(--text); border: none; padding: 12px 18px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 1rem; margin-bottom: 8px; }
-        button:hover { opacity: 0.9; transform: translateY(-1px); background: var(--primary); color: white; }
-        button:disabled { background: #555; cursor: not-allowed; transform: none; color: #888; }
-        
-        .action-btn { width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; background: var(--panel); border: 1px solid var(--border); }
-        .action-btn:hover { background: var(--hover); }
-        
-        .skill-btn { background: var(--accent); color: white; width: 100%; }
-        .rest-btn { background: var(--green); color: white; width: 100%; margin-top: 15px; font-weight: bold; }
-        
-        .choice-btn { 
-            background: var(--panel); color: var(--text); border: 2px solid var(--border); width: 100%; text-align: left; padding: 18px; margin-bottom: 12px;
-            transition: all 0.2s;
-        }
-        .choice-btn:hover { border-color: var(--accent); background: var(--hover); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-
-        .input-group { background: var(--input-bg); padding: 15px; border-radius: 8px; margin-bottom: 15px; color: var(--text); }
-        input[type="text"], input[type="password"], input[type="number"] { width: 100%; padding: 10px; margin-top: 8px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; background: var(--panel); color: var(--text); }
-
-        /* Slider 样式 */
-        .slider-container { background: var(--input-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 8px; }
-        input[type=range] { width: 100%; margin: 10px 0; }
-        .slider-val { float: right; font-weight: bold; color: var(--gold); }
-
-        /* 数值条 */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-box { background: var(--input-bg); padding: 12px; border-radius: 6px; border-left: 4px solid var(--accent); position: relative; }
-        .bar-bg { background: #555; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 5px; }
-        .bar-fill { height: 100%; background: var(--accent); width: 50%; transition: width 0.5s ease-out; }
-        .bar-fill.high { background: var(--green); }
-        .bar-fill.low { background: var(--primary); }
-
-        /* 底部导航栏 */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height);
-            background: var(--panel); border-top: 1px solid var(--border);
-            display: grid; grid-template-columns: repeat(7, 1fr); /* 7个Tab */
-            z-index: 999; box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
-        }
-        .nav-item {
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer; color: #888; font-size: 0.7rem; transition: 0.2s; padding: 2px 0;
-        }
-        .nav-item.active { color: var(--primary); font-weight: bold; background: rgba(255,255,255,0.05); }
-        .nav-icon { font-size: 1.2rem; margin-bottom: 2px; }
-
-        /* 内容区域 */
-        .tab-content { display: none; animation: fadeIn 0.3s; }
-        .tab-content.active { display: block; }
-
-        .bio-box { background: var(--bio-bg); padding: 15px; border-radius: 6px; font-style: italic; color: var(--bio-text); line-height: 1.6; margin-bottom: 20px; border: 1px dashed var(--border); }
-
-        .rank-card {
-            background: linear-gradient(135deg, var(--input-bg), var(--panel));
-            border: 2px solid var(--gold); border-radius: 8px; padding: 15px;
-            margin-bottom: 20px; text-align: center;
-        }
-        .rank-title { font-size: 1.4rem; font-weight: bold; color: var(--gold); margin-bottom: 5px; }
-        .rank-progress { font-size: 0.9rem; color: #888; margin-bottom: 10px; }
-        .rank-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-
-        /* 商店物品 Grid */
-        .item-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .item-card { background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
-        .item-name { font-weight: bold; color: var(--accent); margin-bottom: 5px; font-size: 1rem; }
-        .item-price { color: var(--gold); font-weight: bold; margin-bottom: 5px; }
-        .item-desc { font-size: 0.8em; color: #aaa; margin-bottom: 10px; height: 3em; overflow: hidden; }
-        .buy-btn { width: 100%; padding: 8px; font-size: 0.9rem; background: var(--border); color: var(--text); }
-        .buy-btn:not(:disabled):hover { background: var(--green); color: white; }
-
-        #event-area { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .event-tag { display: inline-block; background: var(--primary); color: white; padding: 3px 8px; font-size: 0.8rem; border-radius: 4px; margin-bottom: 10px; text-transform: uppercase; }
-        .event-text { line-height: 1.8; color: var(--text); font-size: 1.05rem; margin-bottom: 25px; text-align: justify; }
-        .loading-spinner { text-align: center; padding: 40px; color: #888; display: none; }
-
-        /* 病房样式 */
-        .patient-card { background: var(--input-bg); border-left: 4px solid #888; padding: 10px; margin-bottom: 10px; border-radius: 4px; position: relative; }
-        .p-sev-0 { border-color: var(--green); }
-        .p-sev-1 { border-color: var(--gold); }
-        .p-sev-2 { border-color: var(--danger); }
-        .p-header { display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px solid #444; padding-bottom: 5px; margin-bottom: 5px; }
-        .p-info { font-size: 0.9rem; color: #bbb; margin-bottom: 5px; }
-        .p-desc { font-size: 0.85rem; font-style: italic; color: #888; margin-bottom: 8px; }
-        .p-actions { display: flex; gap: 5px; margin-top: 5px; }
-        .p-btn { padding: 4px 8px; font-size: 0.8rem; flex: 1; }
-
-        /* 考核样式 */
-        .exam-box { background: var(--input-bg); padding: 15px; border: 1px solid var(--border); border-radius: 8px; }
-        .exam-q { font-size: 1.1rem; margin-bottom: 15px; font-weight: bold; }
-        .exam-opt { width: 100%; text-align: left; margin-bottom: 8px; padding: 10px; border: 1px solid var(--border); background: var(--panel); color: var(--text); }
-        .exam-opt:hover { border-color: var(--blue); }
-        .streak-badge { background: var(--gold); color: #000; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.9em; margin-left: 10px; }
-
-        /* 弹窗通用样式 */
-        .custom-modal { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); z-index: 2000; display: none;
-            justify-content: center; align-items: center; 
-        }
-        .modal-content { 
-            background: var(--panel); width: 90%; max-width: 400px; padding: 0; 
-            border-radius: 10px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            animation: popIn 0.3s; border: 1px solid var(--border); color: var(--text); position: relative; max-height: 90vh; overflow-y: auto;
-        }
-        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-header { background: var(--input-bg); color: var(--text); padding: 15px; text-align: center; font-size: 1.2rem; font-weight: bold; border-bottom: 1px solid var(--border); }
-        .modal-body { padding: 20px; text-align: center; }
-        
-        #result-status { font-weight: bold; font-size: 1.2rem; text-align: center; margin-bottom: 10px; }
-        .status-success { color: var(--green); }
-        .status-fail { color: var(--primary); }
-
-        #result-text, .msg-text { font-style: italic; color: var(--text); opacity: 0.9; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed var(--border); line-height: 1.5; }
-
-        .change-list { list-style: none; padding: 0; margin: 0; text-align: left; }
-        .change-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 1.1rem; }
-        .change-val { font-weight: bold; }
-        .val-up { color: var(--green); }
-        .val-down { color: var(--primary); }
-        .modal-btn { width: 100%; padding: 15px; background: var(--primary); border-radius: 0; margin: 0; font-size: 1.1rem; color: white; cursor: pointer; border: none; }
-        .modal-btn:hover { opacity: 0.9; }
-        .modal-btn.secondary { background: var(--border); color: var(--text); }
-        
-        .save-slot-btn { 
-            display: block; width: 100%; text-align: left; margin-bottom: 10px; 
-            background: var(--input-bg); border: 1px solid var(--border); padding: 15px;
-            border-radius: 6px; cursor: pointer;
-        }
-        .save-slot-btn:hover { border-color: var(--accent); }
-        .save-meta { font-size: 0.8em; color: #888; margin-top: 5px; }
-
-        #start-event-btn { 
-            width: 100%; margin-top: 15px; background: var(--accent); padding: 15px; 
-            font-size: 1.1rem; font-weight: bold; display: none; color: white;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(230, 126, 34, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0); } }
-
-        #story-container {
-            margin-top: 20px; text-align: left;
-            border: 1px solid var(--border); background: var(--input-bg);
-            padding: 15px; border-radius: 6px; display: none;
-        }
-        #story-content {
-            font-family: 'Georgia', serif; line-height: 1.8; white-space: pre-wrap;
-            max-height: 300px; overflow-y: auto; color: var(--text);
-        }
-        #gen-story-btn {
-            background: var(--accent);
-            width: 100%; margin-top: 15px; padding: 15px;
-            font-weight: bold; color: white;
-        }
-
-        .achieve-list { 
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            padding: 0; 
-            list-style: none;
-        }
-        .achieve-item { 
-            background: var(--input-bg); 
-            padding: 15px; 
-            border-radius: 8px; 
-            border-left: 5px solid var(--gold);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-height: 80px;
-        }
-        .achieve-name {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-        .achieve-desc {
-            font-size: 0.85rem;
-            color: #888;
-            margin-bottom: 8px;
-        }
-        .achieve-percent {
-            font-size: 1rem;
-            font-weight: bold;
-            color: var(--gold);
-        }
-        .achieve-progress-box {
-            margin-top: auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        #setup-screen .input-group {
-            margin-top: -10px; /* 上移 */
-        }
-        .setup-header-row {
-            font-size: 1.2rem; /* 增大字体 */
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        .setup-btn-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .setup-main-btn {
-            width: 70%; /* 缩窄 */
-            padding: 12px;
-            font-size: 1.1rem;
-        }
-    </style>
+    <link rel="stylesheet" href="form.css">
     <script src="test.js"></script>
 </head>
 <body>
@@ -314,8 +13,8 @@
     <header>
         <div class="header-left">
             <div class="system-btns">
-                <button class="sys-btn" id="exit-game-btn" onclick="tryExitGame()">🚪 退出</button>
                 <button class="sys-btn" onclick="openSettingsModal()">⚙️ 设置</button>
+                <button class="sys-btn" onclick="openAchievementsModal()">🏆 成就</button>
             </div>
             <h1>🚑 前线指挥官 <span style="font-size:0.6em; color:#888">MSF</span></h1>
             <div id="game-location-display">📍 ???</div>
@@ -343,21 +42,47 @@
             <h3>🪪 志愿申请表</h3>
             
             <div class="setup-header-row" style="margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 15px;">
-                <div style="margin-bottom: 10px;">
+                <div style="margin-bottom: 15px;">
                     <strong>📍 任务地点:</strong> <span id="p-location" style="color:var(--primary); font-size:1.3rem;">正在分配...</span>
+                    <button onclick="rollLocation()" style="padding:4px 10px; font-size:0.8rem; margin-left:10px;">🎲 随机地点</button>
                     <div id="p-location-desc" style="font-size:0.85rem; color:#888; margin-top:8px; line-height:1.5; font-style:italic; font-weight:normal;"></div>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
-                    <div style="flex: 1;">
-                        <input type="text" id="input-lastname" placeholder="姓" style="width: 60px; display: inline-block; padding: 8px; font-size: 1.1rem;">
-                        <input type="text" id="input-firstname" placeholder="名" style="width: 100px; display: inline-block; padding: 8px; font-size: 1.1rem;">
-                        <span style="font-size: 1rem; color:#888; font-weight: normal;">(<span id="p-gender">?</span> / <span id="p-dept">?</span>)</span>
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+                    <div style="display:flex; align-items: center; gap: 10px;">
+                        <input type="text" id="input-lastname" placeholder="姓" style="width: 60px; padding: 8px; font-size: 1.1rem;">
+                        <input type="text" id="input-firstname" placeholder="名" style="width: 100px; padding: 8px; font-size: 1.1rem;">
+                        <button onclick="rollName()" style="padding:8px 15px; font-size:0.9rem;">🎲 随机姓名</button>
                     </div>
-                    <button onclick="rollCharacter()" style="padding:8px 15px; font-size:0.9rem;">🎲 随机</button>
+                    
+                    <div style="display:flex; align-items: center; gap: 15px;">
+                        <div>
+                            <strong>性别:</strong>
+                            <select id="select-gender" style="padding:8px; background:var(--panel); color:var(--text); border:1px solid var(--border); border-radius:4px; font-size:1rem; margin-left:5px;">
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                        <div>
+                            <strong>科室:</strong>
+                            <select id="select-dept" style="padding:8px; background:var(--panel); color:var(--text); border:1px solid var(--border); border-radius:4px; font-size:1rem; margin-left:5px;">
+                                <option value="内科">内科</option>
+                                <option value="外科">外科</option>
+                                <option value="传染科">传染科</option>
+                                <option value="儿科">儿科</option>
+                                <option value="妇产科">妇产科</option>
+                                <option value="骨科">骨科</option>
+                                <option value="急诊科">急诊科</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <div style="margin-bottom:10px; display:flex; justify-content: space-between; align-items: center;">
+                <strong>📊 初始能力值</strong>
+                <button onclick="rollStats()" style="padding:4px 10px; font-size:0.8rem;">🎲 随机能力</button>
+            </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; text-align:center; margin-bottom: 20px;">
                 <div style="background:var(--panel); border:1px solid var(--border); padding:10px; border-radius:4px;">医学<br><strong id="p-med" style="font-size:1.4em">0</strong></div>
                 <div style="background:var(--panel); border:1px solid var(--border); padding:10px; border-radius:4px;">行政<br><strong id="p-admin" style="font-size:1.4em">0</strong></div>
@@ -423,94 +148,124 @@
         </div>
 
         <div id="tab-character" class="tab-content">
-            <div id="bio-container" class="bio-box"></div>
-
-            <div class="rank-card">
-                <div class="rank-title" id="val-rank-name">医疗专员</div>
-                <div class="rank-progress">当前职级: Lv.<span id="val-rank-lvl">1</span></div>
-                <div style="font-size:0.9em; margin-bottom:5px;">上级好感度: <span id="val-favor">10</span>/100</div>
-                <div class="bar-bg" style="margin-bottom:10px;"><div class="bar-fill" id="bar-favor" style="background:var(--gold)"></div></div>
-                <div style="font-size:1.1rem; color:#fff; margin-bottom: 5px;">考核连胜: <span id="val-max-streak" style="color:var(--gold); font-weight:bold; font-size:1.3rem;">0</span> (晋升关键)</div>
-                
-                <div class="rank-actions">
-                    <button style="font-size:0.9rem; padding:8px;" onclick="interactBoss('network')">🤝 联络感情</button>
-                    <button style="font-size:0.9rem; padding:8px;" onclick="interactBoss('fund')">💰 请求资金</button>
-                </div>
-                <button id="btn-promo" style="width:100%; margin-top:10px; background:var(--blue); color:white;" onclick="applyForPromotion()">⬆️ 申请晋升 (仅秋季开放)</button>
-                <div id="promo-status" style="font-size:0.8em; color:#888; margin-top:5px;"></div>
+            <div class="sub-tab-nav" style="display:flex; gap:10px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+                <button class="nav-item active" onclick="switchCharSubTab('archive', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">档案</button>
+                <button class="nav-item" onclick="switchCharSubTab('workstation', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">工作站</button>
+                <button class="nav-item" onclick="switchCharSubTab('supply', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">补给站</button>
+                <button class="nav-item" onclick="switchCharSubTab('promo', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">职业晋级</button>
             </div>
 
-            <div class="stat-box" style="margin-bottom:15px; border-left-color:var(--purple);">
-                💵 个人存款: <span id="val-cash-char" style="font-weight:bold; color:var(--purple); float:right;">$100</span>
-                <div style="font-size:0.8em; color:#888; margin-top:5px;">生活费: -$50 (季度结算时扣除)</div>
-                <div style="font-size:0.8em; color:#2ecc71; margin-top:2px;">下季度薪水: <span id="val-salary"></span></div>
-            </div>
-
-            <h4>人物特性</h4>
-            <div class="stats-grid">
-                <div class="stat-box">❤️ 健康 <span style="float:right;" id="val-health">0</span><div class="bar-bg"><div class="bar-fill" id="bar-health"></div></div></div>
-                <div class="stat-box">⚡ 精力 <span style="float:right;" id="val-energy">0</span><div class="bar-bg"><div class="bar-fill" id="bar-energy"></div></div></div>
-                <div class="stat-box">💉 医学 <span style="float:right;" id="val-med">0</span><div class="bar-bg"><div class="bar-fill" id="bar-med" style="background:var(--blue)"></div></div></div>
-                <div class="stat-box">📋 行政 <span style="float:right;" id="val-admin">0</span><div class="bar-bg"><div class="bar-fill" id="bar-admin" style="background:var(--blue)"></div></div></div>
-                <div class="stat-box">🗣️ 社交 <span style="float:right;" id="val-soc">0</span><div class="bar-bg"><div class="bar-fill" id="bar-soc" style="background:var(--blue)"></div></div></div>
-                <div class="stat-box" style="border-left-color:var(--danger);">👮 嫌疑 <span style="float:right;" id="val-suspicion">0</span><div class="bar-bg"><div class="bar-fill" id="bar-suspicion" style="background:var(--danger)"></div></div></div>
-            </div>
-            
-            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
-                <button class="skill-btn" onclick="trainSkill('med')">📖 研读医学</button>
-                <button class="skill-btn" onclick="trainSkill('admin')">📋 处理文书</button>
-                <button class="skill-btn" onclick="trainSkill('soc')">🗣️ 交流经验</button>
-            </div>
-            
-            <button class="rest-btn" id="btn-rest" onclick="doRest()">🛌 休息 (本季度限一次)</button>
-        </div>
-
-        <div id="tab-ward" class="tab-content">
-            <div class="stat-box" style="margin-bottom:15px; border-left-color:var(--blue);">
-                🏥 住院部: <span id="ward-count">0</span> / <span id="ward-cap">20</span>
-                <span style="float:right; font-size:0.8em; color:#aaa;" id="ward-limit-msg">本季收治: 0/3</span>
-            </div>
-            
-            <div style="display:flex; gap:10px; margin-bottom:15px;">
-                <button class="action-btn" style="flex:1; justify-content:center; background:var(--blue); color:white;" onclick="admitPatient()">➕ 收入院</button>
-                <button class="action-btn" id="btn-rounds" style="flex:1; justify-content:center; background:var(--purple); color:white;" onclick="doRounds()">🩺 查房 (消耗物资/健康)</button>
-            </div>
-            
-            <div id="patient-list"></div>
-        </div>
-
-        <div id="tab-exam" class="tab-content">
-            <div class="stat-box" style="margin-bottom:15px; border-left-color:var(--gold);">
-                📝 执业能力考核
-                <div style="font-size:0.8em; color:#aaa;">当前连胜: <span id="curr-streak">0</span> | 最高连胜: <span id="best-streak">0</span></div>
-            </div>
-            
-            <div id="exam-start-area">
-                <p>每季度可参加一次考核。连胜是晋升的关键。</p>
-                <div style="background:var(--panel); padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid var(--border);">
-                    <div style="font-weight:bold; margin-bottom:10px; color:var(--gold); border-bottom:1px solid var(--border); padding-bottom:5px;">📊 职级晋升连胜要求</div>
-                    <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px; text-align:center;">
-                        <div><div style="font-size:0.8rem; color:#888;">Lv.2</div><div style="font-weight:bold; font-size:1.2rem;">3</div></div>
-                        <div><div style="font-size:0.8rem; color:#888;">Lv.3</div><div style="font-weight:bold; font-size:1.2rem;">5</div></div>
-                        <div><div style="font-size:0.8rem; color:#888;">Lv.4</div><div style="font-weight:bold; font-size:1.2rem;">10</div></div>
-                        <div><div style="font-size:0.8rem; color:#888;">Lv.5</div><div style="font-weight:bold; font-size:1.2rem;">15</div></div>
-                        <div><div style="font-size:0.8rem; color:#888;">Lv.6</div><div style="font-weight:bold; font-size:1.2rem;">20</div></div>
+            <div id="char-archive" class="char-sub-tab active">
+                <div class="resume-card" style="background:var(--panel); border:1px solid var(--border); padding:20px; border-radius:8px; display:flex; gap:20px; align-items: flex-start; margin-bottom:20px;">
+                    <div id="char-icon" style="font-size:4rem; background:var(--input-bg); width:100px; height:100px; display:flex; align-items:center; justify-content:center; border-radius:8px;">👩‍⚕️</div>
+                    <div style="flex:1;">
+                        <h2 id="char-name-display" style="margin:0 0 10px 0; color:var(--gold);">姓名</h2>
+                        <div style="font-size:1.1rem; color:var(--text); opacity:0.8;">
+                            <span id="char-gender-display">性别</span> · <span id="char-dept-display">科室</span>
+                        </div>
                     </div>
                 </div>
-                <button class="skill-btn" id="btn-start-exam" onclick="startExam()" style="width:100%; padding:15px; font-weight:bold; font-size:1.1rem;">✍️ 开始考试</button>
-                
-                <details style="display:none;">
-                    <summary style="cursor:pointer; font-size:0.8em; color:#888;">[开发者] 导入题库</summary>
-                    <textarea id="exam-import-area" style="width:100%; height:100px; background:var(--input-bg); color:var(--text); border:none; margin-top:5px;" placeholder='[{"q":"问题?","o":["选项A","选项B","选项C","选项D","选项E"],"a":0},...]'></textarea>
-                    <button onclick="importQuestions()" style="width:100%; margin-top:5px; font-size:0.8em;">导入JSON</button>
-                </details>
+                <div class="bio-box" id="bio-container" style="min-height:100px; margin-bottom:20px;"></div>
+                <div style="background:var(--panel); border:1px solid var(--border); padding:15px; border-radius:8px;">
+                    <h3 style="margin-top:0; border-bottom:1px solid var(--border); padding-bottom:5px;">📜 履历记录</h3>
+                    <div id="career-summary-archive" style="font-size:0.9rem; line-height:1.8; color:#aaa;">
+                        <div>累计治疗病人: <span id="summary-cured-archive" style="color:var(--blue)">0</span></div>
+                        <div>累计度过季度: <span id="summary-quarters-archive" style="color:var(--gold)">0</span></div>
+                        <div>最高职级: <span id="summary-max-rank-archive" style="color:var(--accent)">1</span></div>
+                    </div>
+                </div>
             </div>
 
-            <div id="exam-ui" style="display:none;" class="exam-box">
-                <div id="exam-q-text" class="exam-q"></div>
-                <div id="exam-options"></div>
-                <div id="exam-result" style="margin-top:20px; padding:15px; border-radius:6px; display:none;"></div>
-                <button id="exam-quit-btn" style="width:100%; margin-top:15px; display:none; background:var(--border); color:var(--text);" onclick="quitExam()">退出答题</button>
+            <div id="char-workstation" class="char-sub-tab" style="display:none;">
+                <div style="display:flex; gap:15px; margin-bottom:20px; background:var(--panel); padding:15px; border-radius:8px; border:1px solid var(--border);">
+                    <img src="image/work1.png" alt="工作站" style="width:100px; height:100px; border-radius:4px; object-fit:cover; flex-shrink:0;">
+                    <div style="flex:1;">
+                        <div style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">个人存款: <span id="val-cash-work" style="color:var(--gold);">$0</span></div>
+                        <div class="stat-box" style="margin-bottom:10px; padding:5px; background:none; border:none;">❤️ 健康 <span style="float:right;" id="val-health-work">0</span><div class="bar-bg" style="height:6px;"><div class="bar-fill" id="bar-health-work"></div></div></div>
+                        <div class="stat-box" style="padding:5px; background:none; border:none;">⚡ 精力 <span style="float:right;" id="val-energy-work">0</span><div class="bar-bg" style="height:6px;"><div class="bar-fill" id="bar-energy-work"></div></div></div>
+                    </div>
+                </div>
+                
+                <div class="stats-grid" style="grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:20px;">
+                    <div style="text-align:center; background:var(--input-bg); padding:10px; border-radius:4px; font-size:0.85rem;">医学<br><strong id="val-med-work">0</strong></div>
+                    <div style="text-align:center; background:var(--input-bg); padding:10px; border-radius:4px; font-size:0.85rem;">行政<br><strong id="val-admin-work">0</strong></div>
+                    <div style="text-align:center; background:var(--input-bg); padding:10px; border-radius:4px; font-size:0.85rem;">社交<br><strong id="val-soc-work">0</strong></div>
+                </div>
+
+                <h4>能力进修 (消耗精力)</h4>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:20px;">
+                    <button class="skill-btn" onclick="trainSkill('med')" style="font-size:0.85rem; padding:10px;">📖 研读医学</button>
+                    <button class="skill-btn" onclick="trainSkill('admin')" style="font-size:0.85rem; padding:10px;">📋 处理文书</button>
+                    <button class="skill-btn" onclick="trainSkill('soc')" style="font-size:0.85rem; padding:10px;">🗣️ 交流经验</button>
+                </div>
+
+                <h4>身心维护 (每季限一次)</h4>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <button class="action-btn" id="btn-running" onclick="doTrainingAction('running')" style="justify-content:center; padding:10px;">🏃 跑步健身 (+5健康)</button>
+                    <button class="action-btn" id="btn-sleep" onclick="doTrainingAction('sleep')" style="justify-content:center; padding:10px;">🛌 睡个好觉 (+5精力)</button>
+                </div>
+            </div>
+
+            <div id="char-supply" class="char-sub-tab" style="display:none;">
+                <div style="display:flex; gap:15px; margin-bottom:20px; background:var(--panel); padding:15px; border-radius:8px; border:1px solid var(--border);">
+                    <img src="image/supply1.png" alt="补给站" style="width:100px; height:100px; border-radius:4px; object-fit:cover; flex-shrink:0;">
+                    <div style="flex:1;">
+                        <div style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">个人存款: <span id="val-cash-supply" style="color:var(--gold);">$0</span></div>
+                        <div class="stat-box" style="margin-bottom:10px; padding:5px; background:none; border:none;">❤️ 健康 <span style="float:right;" id="val-health-supply">0</span><div class="bar-bg" style="height:6px;"><div class="bar-fill" id="bar-health-supply"></div></div></div>
+                        <div class="stat-box" style="padding:5px; background:none; border:none;">⚡ 精力 <span style="float:right;" id="val-energy-supply">0</span><div class="bar-bg" style="height:6px;"><div class="bar-fill" id="bar-energy-supply"></div></div></div>
+                    </div>
+                </div>
+                <h3>🛒 补给清单</h3>
+                <div id="personal-shop-container" class="item-grid"></div>
+            </div>
+
+            <div id="char-promo" class="char-sub-tab" style="display:none;">
+                <div class="rank-card">
+                    <div class="rank-title" id="val-rank-name">医疗专员</div>
+                    <div class="rank-progress">当前职级: Lv.<span id="val-rank-lvl">1</span></div>
+                    <div style="font-size:0.9em; margin-bottom:5px;">上级好感度: <span id="val-favor">10</span>/100</div>
+                    <div class="bar-bg" style="margin-bottom:10px;"><div class="bar-fill" id="bar-favor" style="background:var(--gold)"></div></div>
+                    <div style="font-size:1rem; margin-bottom:5px;">考核连胜: <span id="val-max-streak" style="color:var(--gold); font-weight:bold;">0</span></div>
+                    <div style="font-size:1rem; color:#2ecc71; margin-bottom:10px;">季度薪水: <span id="val-salary-promo"></span></div>
+                    
+                    <div class="rank-actions">
+                        <button style="font-size:0.9rem; padding:8px;" onclick="interactBoss('network')">🤝 联络感情</button>
+                        <button style="font-size:0.9rem; padding:8px;" onclick="interactBoss('fund')">💰 请求资金</button>
+                    </div>
+                    <button id="btn-promo" style="width:100%; margin-top:10px; background:var(--blue); color:white;" onclick="applyForPromotion()">⬆️ 申请晋升 (仅秋季开放)</button>
+                    <div id="promo-status" style="font-size:0.8em; color:#888; margin-top:5px;"></div>
+                </div>
+
+                <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;">
+                
+                <div class="stat-box" style="margin-bottom:15px; border-left-color:var(--gold);">
+                    📝 执业能力考核
+                    <div style="font-size:0.8em; color:#aaa;">当前连胜: <span id="curr-streak">0</span> | 最高连胜: <span id="best-streak">0</span></div>
+                </div>
+                
+                <div id="exam-start-area">
+                    <div style="background:var(--panel); padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid var(--border);">
+                        <div style="font-weight:bold; margin-bottom:10px; color:var(--gold); border-bottom:1px solid var(--border); padding-bottom:5px;">📊 职级晋升连胜要求</div>
+                        <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px; text-align:center;">
+                            <div><div style="font-size:0.8rem; color:#888;">Lv.2</div><div style="font-weight:bold; font-size:1.2rem;">3</div></div>
+                            <div><div style="font-size:0.8rem; color:#888;">Lv.3</div><div style="font-weight:bold; font-size:1.2rem;">5</div></div>
+                            <div><div style="font-size:0.8rem; color:#888;">Lv.4</div><div style="font-weight:bold; font-size:1.2rem;">10</div></div>
+                            <div><div style="font-size:0.8rem; color:#888;">Lv.5</div><div style="font-weight:bold; font-size:1.2rem;">15</div></div>
+                            <div><div style="font-size:0.8rem; color:#888;">Lv.6</div><div style="font-weight:bold; font-size:1.2rem;">20</div></div>
+                        </div>
+                    </div>
+                    <button class="skill-btn" id="btn-start-exam" onclick="startExam()" style="width:100%; padding:15px; font-weight:bold; font-size:1.1rem;">✍️ 开始考试</button>
+                </div>
+
+                <div id="exam-ui" style="display:none;" class="exam-box">
+                    <div id="exam-q-text" class="exam-q"></div>
+                    <div id="exam-options"></div>
+                    <div id="confirm-exam-area" style="margin-top:15px; display:none;">
+                        <button id="btn-confirm-answer" class="skill-btn" style="width:100%; padding:12px; font-weight:bold; background:var(--green);">✔️ 确认并提交答案</button>
+                    </div>
+                    <div id="exam-result" style="margin-top:20px; padding:15px; border-radius:6px; display:none;"></div>
+                    <button id="exam-quit-btn" style="width:100%; margin-top:15px; display:none; background:var(--border); color:var(--text);" onclick="quitExam()">退出答题</button>
+                </div>
             </div>
         </div>
 
@@ -518,7 +273,7 @@
             <div class="stat-box" style="margin-bottom:15px; border-left-color:var(--gold);">
                 <div>💰 基地资金: <span id="val-funds" style="font-weight:bold; color:var(--gold); cursor:pointer;" onclick="handleFundsClick()">$10000</span></div>
                 <div style="font-size:0.9em; margin-top:5px;">🏰 等级: <span id="val-base-lvl">基础医疗点</span> (Lv.<span id="val-base-lvl-num">1</span>)</div>
-                <div style="font-size:0.8em; color:#888;">每季消耗: $1000 - (行政x10) + (紧张x10) | 拨款 +$1000</div>
+                <div style="font-size:0.8em; color:#888;">每季消耗: $1000 - (行政x10) + (紧张x10) | 拨款 +$2000</div>
             </div>
 
             <div class="stats-grid">
@@ -528,6 +283,22 @@
                 <div class="stat-box">💧 净水 <span style="float:right;" id="val-water">0%</span><div class="bar-bg"><div class="bar-fill" id="bar-water"></div></div></div>
             </div>
             
+            <div id="tab-ward-inner">
+                <div class="stat-box" style="margin-bottom:15px; border-left-color:var(--blue);">
+                    🏥 住院部: <span id="ward-count">0</span> / <span id="ward-cap">20</span>
+                    <span style="float:right; font-size:0.8em; color:#aaa;" id="ward-limit-msg">本季收治: 0/3</span>
+                </div>
+                
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <button class="action-btn" style="flex:1; justify-content:center; background:var(--blue); color:white;" onclick="admitPatient()">➕ 收入院</button>
+                    <button class="action-btn" id="btn-rounds" style="flex:1; justify-content:center; background:var(--purple); color:white;" onclick="doRounds()">🩺 查房 (消耗物资/健康)</button>
+                </div>
+                
+                <div id="patient-list"></div>
+            </div>
+
+            <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;">
+
             <h4>基地行动 (消耗资源/精力)</h4>
             <button class="action-btn" onclick="doAction('distribute_food')"><span>🥣 分发口粮与药品</span><span style="font-size:0.8em; color:#888;">物资-5, 紧张减少受社交加成</span></button>
             <button class="action-btn" onclick="doAction('distribute_water')"><span>🚰 提供净水</span><span style="font-size:0.8em; color:#888;">水-5, 紧张减少受社交加成</span></button>
@@ -544,14 +315,10 @@
                 <div style="font-size:0.8em; color:#aaa;">个人捐出 <span id="don-give">$0</span> -> 基地获得 <span id="don-get">$0</span></div>
                 <button class="action-btn" style="margin-top:5px; justify-content:center; border-color:var(--green);" onclick="commitDonate()">确认捐赠</button>
             </div>
-        </div>
-        
-        <div id="tab-items" class="tab-content">
-             <div class="stat-box" style="margin-bottom:15px; border-left-color:var(--purple);">
-                💵 个人存款: <span id="val-cash-items" style="font-weight:bold; color:var(--purple); float:right;">$100</span>
-            </div>
-            <h3>🛒 补给站 & 建设</h3>
-            
+
+            <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;">
+
+            <h3>🛒 采购 (基地资金)</h3>
             <div class="item-grid" style="margin-bottom:20px;">
                 <div class="item-card">
                     <div><div class="item-name">📦 购买物资包</div><div class="item-price">基地资金 $500</div><div class="item-desc">物资 +5</div></div>
@@ -562,41 +329,13 @@
                     <button class="buy-btn" onclick="buyBaseItem('water')">购买</button>
                 </div>
             </div>
-
-            <div id="shop-container" class="item-grid"></div>
+            <div id="base-shop-container" class="item-grid"></div>
         </div>
-
-        <div id="tab-achievements" class="tab-content">
-            <h3>🏆 成就系统</h3>
-            <div id="achievement-progress-container" style="margin-bottom:20px; padding:15px; background:var(--panel); border-radius:8px;">
-                <h4 style="margin:0 0 10px 0;">总达成率</h4>
-                <div class="bar-bg" style="height:12px;"><div id="total-achieve-bar" class="bar-fill" style="width:0%; background:var(--gold);"></div></div>
-                <div id="total-achieve-text" style="text-align:right; font-size:0.9rem; margin-top:5px; font-weight:bold; color:var(--gold);">0%</div>
-            </div>
-            <ul id="achievement-list" class="achieve-list"></ul>
-            
-            <div style="margin-top:30px; border-top: 1px solid var(--border); padding-top:20px;">
-                <h3>📜 履历记录</h3>
-                <div id="career-summary" style="font-size:0.9rem; line-height:1.6; color:#aaa; background:var(--panel); padding:15px; border-radius:8px; margin-bottom:20px;">
-                    <div>累计治疗病人: <span id="summary-cured" style="color:var(--blue)">0</span></div>
-                    <div>累计度过季度: <span id="summary-quarters" style="color:var(--gold)">0</span></div>
-                    <div>最高职级: <span id="summary-max-rank" style="color:var(--accent)">1</span></div>
-                </div>
-            </div>
-        </div>
-
+        
     </div>
 
-    <div class="bottom-nav" id="bottom-nav" style="display:none;">
-        <div class="nav-item active" onclick="switchNav('event', this)">
-            <div class="nav-icon">🚨</div>
-            <div>事件</div>
-        </div>
-        <div class="nav-item" onclick="switchNav('ward', this)">
-            <div class="nav-icon">🏥</div>
-            <div>病房</div>
-        </div>
-        <div class="nav-item" onclick="switchNav('character', this)">
+    <div class="bottom-nav" id="bottom-nav" style="display:none; grid-template-columns: repeat(3, 1fr);">
+        <div class="nav-item active" onclick="switchNav('character', this)">
             <div class="nav-icon">🩺</div>
             <div>人物</div>
         </div>
@@ -604,17 +343,9 @@
             <div class="nav-icon">⛺</div>
             <div>基地</div>
         </div>
-        <div class="nav-item" onclick="switchNav('items', this)">
-            <div class="nav-icon">🛒</div>
-            <div>物品</div>
-        </div>
-        <div class="nav-item" onclick="switchNav('exam', this)">
-            <div class="nav-icon">📝</div>
-            <div>考核</div>
-        </div>
-        <div class="nav-item" onclick="switchNav('achievements', this)">
-            <div class="nav-icon">🏆</div>
-            <div>成就</div>
+        <div class="nav-item" onclick="switchNav('event', this)">
+            <div class="nav-icon">🚨</div>
+            <div>季度事件</div>
         </div>
     </div>
 
@@ -739,10 +470,12 @@
     <div class="modal-content" style="max-width:600px; max-height:90vh; overflow-y:auto;">
         <div class="modal-header" style="background:var(--panel); color:var(--text);">⚙️ 游戏设置</div>
         <div class="modal-body" style="text-align:left;">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
                 <button class="modal-btn" onclick="saveGameManual(); closeSettingsModal();">💾 手动存档</button>
                 <button class="modal-btn secondary" onclick="closeSettingsModal(); openLoadModal();">📂 读取存档</button>
             </div>
+            <button class="modal-btn" id="exit-game-btn-settings" onclick="tryExitGame()" style="width:100%; background:var(--danger); margin-bottom:20px;">🚪 退出游戏</button>
+            
             <div style="margin-bottom:20px;">
                 <button class="modal-btn" style="width:100%;" onclick="toggleTheme();">☀️/🌙 切换日间/夜间模式</button>
             </div>
@@ -762,7 +495,7 @@
                             <li><strong>医学</strong> - 影响治疗病人的效果</li>
                             <li><strong>行政</strong> - 降低基地运营成本</li>
                             <li><strong>社交</strong> - 安抚难民更有效，减少紧张度</li>
-                            <li><strong>健康/精力</strong> - 执行行动的消耗，可通过休息恢复</li>
+                            <li><strong>健康/精力</strong> - 执行行动的消耗</li>
                         </ul>
                         <p style="margin-top:10px;"><strong>营地属性：</strong></p>
                         <ul style="margin-left:20px;">
@@ -816,13 +549,48 @@
                             <li>与上级保持良好关系，好感度是晋升的关键</li>
                             <li>挪用公款会增加嫌疑度，风险自负</li>
                             <li>重症病人生命指征衰减快，优先处理</li>
-                            <li>每季度只能休息一次，合理规划精力</li>
+                            <li>健康和精力每季度会自动恢复10点</li>
                         </ul>
                     </details>
                 </div>
             </div>
             <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;">
             <button class="modal-btn" style="width:100%;" onclick="closeSettingsModal()">关 闭</button>
+        </div>
+    </div>
+</div>
+
+<div id="achievements-modal" class="custom-modal">
+    <div class="modal-content" style="max-width:600px; max-height:90vh; overflow-y:auto;">
+        <div class="modal-header" style="background:var(--panel); color:var(--text);">🏆 成就系统</div>
+        <div class="modal-body">
+            <div id="achievement-progress-container" style="margin-bottom:20px; padding:15px; background:var(--panel); border-radius:8px;">
+                <h4 style="margin:0 0 10px 0;">总达成率</h4>
+                <div class="bar-bg" style="height:12px;"><div id="total-achieve-bar" class="bar-fill" style="width:0%; background:var(--gold);"></div></div>
+                <div id="total-achieve-text" style="text-align:right; font-size:0.9rem; margin-top:5px; font-weight:bold; color:var(--gold);">0%</div>
+            </div>
+            <ul id="achievement-list" class="achieve-list"></ul>
+            
+            <div style="margin-top:30px; border-top: 1px solid var(--border); padding-top:20px;">
+                <h3>📜 履历记录</h3>
+                <div id="career-summary" style="font-size:0.9rem; line-height:1.6; color:#aaa; background:var(--panel); padding:15px; border-radius:8px; margin-bottom:20px;">
+                    <div>累计治疗病人: <span id="summary-cured" style="color:var(--blue)">0</span></div>
+                    <div>累计度过季度: <span id="summary-quarters" style="color:var(--gold)">0</span></div>
+                    <div>最高职级: <span id="summary-max-rank" style="color:var(--accent)">1</span></div>
+                </div>
+            </div>
+            <button class="modal-btn" style="width:100%;" onclick="$('achievements-modal').style.display='none'">关 闭</button>
+        </div>
+    </div>
+</div>
+
+<div id="quarterly-report-modal" class="custom-modal">
+    <div class="modal-content">
+        <div class="modal-header" style="background:var(--blue); color:white;">📊 季度经营报告</div>
+        <div class="modal-body">
+            <p id="report-period" style="font-weight:bold; margin-bottom:15px;"></p>
+            <ul id="report-list" class="change-list"></ul>
+            <button class="modal-btn" onclick="$('quarterly-report-modal').style.display='none'">确 定</button>
         </div>
     </div>
 </div>
@@ -881,9 +649,10 @@
     ];
 
     const SHOP_ITEMS = [
-        { id: 'snack', name: '🍫 零食', price: 100, desc: '增加 3点 精力', type: 'cons', effect: { energy: 3 } },
-        { id: 'medkit', name: '🩹 急救包', price: 150, desc: '增加 3点 健康', type: 'cons', effect: { health: 3 } },
-        { id: 'coffee', name: '☕ 现磨咖啡', price: 200, desc: '增加 5点 精力', type: 'cons', effect: { energy: 5 } },    
+        { id: 'snack', name: '🍫 零食', price: 50, desc: '增加 3点 精力', type: 'cons', effect: { energy: 3 } },
+        { id: 'medkit', name: '🩹 急救包', price: 50, desc: '增加 3点 健康', type: 'cons', effect: { health: 3 } },
+        { id: 'coffee', name: '☕ 现磨咖啡', price: 100, desc: '增加 5点 精力', type: 'cons', effect: { energy: 5 } },    
+        { id: 'epi', name: '💉 肾上腺素针', price: 100, desc: '增加 5点 健康', type: 'cons', effect: { health: 5 } },
         { id: 'suit', name: '👔 正装', price: 400, desc: '永久增加 5点 社交', type: 'perm', effect: { soc: 5 } },
 		{ id: 'book', name: '📚 管理学培训班', price: 600, desc: '永久增加 5点 行政', type: 'perm', effect: { admin: 5 } },
 		{ id: 'scope', name: '🩺 特级听诊器', price: 800, desc: '永久增加 5点 医学', type: 'perm', effect: { med: 5 } },
@@ -954,7 +723,7 @@
     // 状态数据
     let player = { 
         name:"", gender:"", dept:"", med:0, admin:0, soc:0, health:60, energy:60, location: "",
-        suspicion: 0, investigationCount: 0, rankIndex: 0, favor: 50, cash: 100, items: [],
+        suspicion: 0, investigationCount: 0, rankIndex: 0, favor: 50, cash: 300, items: [],
         stats: { cured: 0, deaths: 0, discharged: 0, totalEmbezzled: 0, currentLocQuarters: 0, visitedLocs: [] },
         achievements: {}
     };
@@ -963,7 +732,6 @@
     let quartersSinceRank6 = 0;
     let dangerLevel = 5; 
     let isEventResolved = false; 
-    let hasRestedToday = false; 
     let historyLog = [];
     let isVictoryPending = false;
     let bioCache = "";
@@ -1021,19 +789,21 @@
 
     // --- 游戏逻辑 ---
 
-    function generateRandomData() {
+    function rollName() {
         player.lastName = LAST_NAMES[randInt(0, LAST_NAMES.length-1)];
         player.firstName = FIRST_NAMES[randInt(0, FIRST_NAMES.length-1)];
         player.name = player.lastName + player.firstName;
-        
-        player.gender = Math.random() > 0.5 ? "男" : "女";
-        const depts = ["内科", "外科", "传染科", "儿科", "妇产科"];
-        player.dept = depts[randInt(0, depts.length-1)];
-        
-        player.location = CHAR_LOCATIONS[randInt(0, CHAR_LOCATIONS.length-1)]; 
-        player.suspicion = 0;
-        player.investigationCount = 0;
-        
+        if($('input-lastname')) $('input-lastname').value = player.lastName;
+        if($('input-firstname')) $('input-firstname').value = player.firstName;
+    }
+
+    function rollLocation() {
+        player.location = CHAR_LOCATIONS[randInt(0, CHAR_LOCATIONS.length-1)];
+        if($('p-location')) $('p-location').innerText = player.location;
+        if($('p-location-desc')) $('p-location-desc').innerText = LOCATION_DESCRIPTIONS[player.location] || "";
+    }
+
+    function rollStats() {
         let sum = 0;
         do {
             player.med = randInt(10, 60);
@@ -1041,19 +811,39 @@
             player.soc = randInt(10, 60);
             sum = player.med + player.admin + player.soc;
         } while (sum < 100 || sum > 150);
+        
+        if($('p-med')) $('p-med').innerText = player.med;
+        if($('p-admin')) $('p-admin').innerText = player.admin;
+        if($('p-soc')) $('p-soc').innerText = player.soc;
+    }
+
+    function generateRandomData() {
+        rollName();
+        rollLocation();
+        rollStats();
+        
+        player.gender = Math.random() > 0.5 ? "男" : "女";
+        if($('select-gender')) $('select-gender').value = player.gender;
+        
+        const depts = ["内科", "外科", "传染科", "儿科", "妇产科", "骨科", "急诊科"];
+        player.dept = depts[randInt(0, depts.length-1)];
+        if($('select-dept')) $('select-dept').value = player.dept;
+        
+        player.suspicion = 0;
+        player.investigationCount = 0;
     }
 
     function updateSetupUI() {
         if(!$('p-location')) return;
         if($('input-lastname')) $('input-lastname').value = player.lastName || "";
         if($('input-firstname')) $('input-firstname').value = player.firstName || "";
-        if($('p-gender')) $('p-gender').innerText = player.gender;
-        if($('p-dept')) $('p-dept').innerText = player.dept;
-        if($('p-location')) $('p-location').innerText = player.location;
+        if($('select-gender')) $('select-gender').value = player.gender || "男";
+        if($('select-dept')) $('select-dept').value = player.dept || "内科";
+        if($('p-location')) $('p-location').innerText = player.location || "正在分配...";
         if($('p-location-desc')) $('p-location-desc').innerText = LOCATION_DESCRIPTIONS[player.location] || "";
-        if($('p-med')) $('p-med').innerText = player.med;
-        if($('p-admin')) $('p-admin').innerText = player.admin;
-        if($('p-soc')) $('p-soc').innerText = player.soc;
+        if($('p-med')) $('p-med').innerText = player.med || 0;
+        if($('p-admin')) $('p-admin').innerText = player.admin || 0;
+        if($('p-soc')) $('p-soc').innerText = player.soc || 0;
     }
 
     function rollCharacter() {
@@ -1066,7 +856,7 @@
     function saveGame(type) {
         const gameState = {
             player, camp, currentQuarter, dangerLevel, 
-            isEventResolved, hasRestedToday, historyLog, 
+            isEventResolved, historyLog, 
             isVictoryPending, quartersSinceRank6, bioCache,
             patients, admittedCount, hasRounded,
             examQuestions, examStreak, maxExamStreak, hasTakenExam,
@@ -1106,7 +896,6 @@
             currentQuarter = state.currentQuarter;
             dangerLevel = state.dangerLevel;
             isEventResolved = state.isEventResolved;
-            hasRestedToday = state.hasRestedToday;
             historyLog = state.historyLog;
             isVictoryPending = state.isVictoryPending;
             quartersSinceRank6 = state.quartersSinceRank6;
@@ -1159,7 +948,6 @@
                 $('end-screen').classList.remove('active');
                 $('setup-screen').classList.add('active');
                 $('bottom-nav').style.display = 'none';
-                $('exit-game-btn').style.display = 'none';
                 checkSaveFile();
             }
         });
@@ -1185,7 +973,7 @@
         camp = { refugees: 100, supplies: 60, water: 60, tension: 30, funds: 10000, baseLevelIdx: 0 };
         player.rankIndex = 0;
         player.favor = 10;
-        player.cash = 100;
+        player.cash = 300;
         player.items = [];
         player.suspicion = 0;
         player.investigationCount = 0;
@@ -1194,20 +982,28 @@
         player.stats = { cured: 0, deaths: 0, discharged: 0, totalEmbezzled: 0, currentLocQuarters: 0, visitedLocs: [], totalQuarters: 0, isHonest: 1, hasSurrendered: 0 };
         player.achievements = {}; // 清空成就记录
         
-        // 获取手动输入的姓名
+        // 获取手动输入或选择的属性
         player.lastName = $('input-lastname').value || "无";
         player.firstName = $('input-firstname').value || "名";
         player.name = player.lastName + player.firstName;
+        player.gender = $('select-gender').value;
+        player.dept = $('select-dept').value;
+        player.location = $('p-location').innerText;
+        player.med = parseInt($('p-med').innerText);
+        player.admin = parseInt($('p-admin').innerText);
+        player.soc = parseInt($('p-soc').innerText);
         
         patients = [];
         admittedCount = 0;
         hasRounded = false;
-        hasRestedToday = false;
         quartersSinceRank6 = 0;
         bioCache = "";
         examStreak = 0;
         maxExamStreak = 0;
         hasTakenExam = false;
+        
+        // 初始化本季行动限制
+        player.quarterlyActions = { running: 0, sleep: 0 };
         
         loadtestDataQuestions();
 
@@ -1232,11 +1028,42 @@
         $('settings-modal').style.display = 'none';
     }
 
+    function openAchievementsModal() {
+        $('achievements-modal').style.display = 'flex';
+        updateUI();
+    }
+
+    function switchCharSubTab(tabId, btn) {
+        document.querySelectorAll('.char-sub-tab').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.sub-tab-nav .nav-item').forEach(el => el.classList.remove('active'));
+        
+        $('char-' + tabId).style.display = 'block';
+        if(btn) btn.classList.add('active');
+        
+        if(tabId === 'supply' || tabId === 'workstation') renderShop();
+        updateUI();
+    }
+
     function switchNav(tabName, btnElement) {
+        // 重定向旧的标签页名
+        if(tabName === 'ward') tabName = 'base';
+        if(tabName === 'exam' || tabName === 'items') tabName = 'character';
+        if(tabName === 'achievements') {
+            openAchievementsModal();
+            return;
+        }
+
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        $('tab-' + tabName).classList.add('active');
+        const targetTab = $('tab-' + tabName);
+        if(targetTab) targetTab.classList.add('active');
+        
         if(btnElement) btnElement.classList.add('active');
+        if(tabName === 'base') renderShop();
+        if(tabName === 'character') {
+            switchCharSubTab('archive', document.querySelector('.sub-tab-nav .nav-item'));
+        }
+        updateUI();
     }
 
     function toggleApiInput() {
@@ -1251,7 +1078,6 @@
         
         $('setup-screen').classList.remove('active');
         $('loading-screen').classList.add('active');
-        $('exit-game-btn').style.display = 'block';
 
         if (!isLoad) {
             addLog("> 验证身份权限..."); await wait(600);
@@ -1339,13 +1165,17 @@
     // --- 基地 & 商店逻辑 ---
 
     function renderShop() {
-        const container = $('shop-container');
-        container.innerHTML = '';
+        const personalContainer = $('personal-shop-container');
+        const baseContainer = $('base-shop-container');
+        if(!personalContainer || !baseContainer) return;
+
+        personalContainer.innerHTML = '';
+        baseContainer.innerHTML = '';
+
         SHOP_ITEMS.forEach(item => {
             if(item.id.includes('base_lv')) {
-                // Check level requirement
-                if(item.level <= camp.baseLevelIdx) return; // Already bought or lower level
-                if(item.level > camp.baseLevelIdx + 1) return; // Next level only
+                if(item.level <= camp.baseLevelIdx) return;
+                if(item.level > camp.baseLevelIdx + 1) return;
             }
 
             const el = document.createElement('div');
@@ -1359,7 +1189,9 @@
                 </div>
                 <button class="buy-btn" id="btn-buy-${item.id}" onclick="buyItem('${item.id}')">购买</button>
             `;
-            container.appendChild(el);
+            
+            if(item.type === 'base') baseContainer.appendChild(el);
+            else personalContainer.appendChild(el);
         });
     }
 
@@ -1427,38 +1259,39 @@
             const sevColor = ["#2ecc71","#f1c40f","#e74c3c"][p.sev];
             
             // 生命指征颜色
-            const vitalColor = p.vital > 50 ? "#2ecc71" : (p.vital > 30 ? "#f1c40f" : "#e74c3c");
+            const vitalColor = p.vital > 50 ? "#2ecc71" : (p.vital > 20 ? "#f1c40f" : "#e74c3c");
             const vital = p.vital !== undefined ? p.vital : 60;
             
             // 根据状态显示不同按钮
             let actionButtons = '';
             if(p.isDead) {
                 actionButtons = `
-                    <button class="p-btn" style="background:#555; color:white;" onclick="buryPatient(${idx})">⚰️ 埋葬 (-$100)</button>
+                    <button class="p-btn" style="background:#555; color:white; flex:1;" onclick="buryPatient(${idx})">⚰️ 埋葬 (-$100)</button>
                 `;
             } else {
                 actionButtons = `
-                    <button class="p-btn" style="background:var(--blue); color:white;" onclick="treatPatient(${idx})">💉 治疗</button>
-                    ${vital <= 30 ? `<button class="p-btn" style="background:var(--danger); color:white;" onclick="rescuePatient(${idx})">🚨 抢救</button>` : ''}
-                    <button class="p-btn" style="background:var(--border); color:var(--text);" onclick="dischargePatient(${idx})">出院</button>
+                    <button class="p-btn" style="background:var(--blue); color:white; flex:1;" onclick="treatPatient(${idx})">💉 治疗</button>
+                    ${vital <= 30 ? `<button class="p-btn" style="background:var(--danger); color:white; flex:1;" onclick="rescuePatient(${idx})">🚨 抢救</button>` : ''}
+                    <button class="p-btn" style="background:var(--border); color:var(--text); flex:1;" onclick="dischargePatient(${idx})">出院</button>
                 `;
             }
             
             card.innerHTML = `
-                <div class="p-header">
-                    <span>${p.bed}床  (${p.age}岁，${p.gender})</span>
-                    <span style="color:${sevColor}">${p.isDead ? '☠️ 已死亡' : sevText}</span>
+                <div class="p-header" style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="font-weight:bold;">${p.name} (${p.age}岁，${p.gender})</span>
+                    <span style="color:${sevColor}; font-weight:bold;">${p.isDead ? '☠️ 已死亡' : sevText}</span>
                 </div>
-                <div class="p-info">主诉: ${p.cc}</div>
-                <div class="p-desc">${p.hpi}</div>
-                <div style="font-size:0.9em; margin-bottom:5px;">
-                    诊疗进度: ${p.prog}% <div class="bar-bg" style="display:inline-block; width:100px; height:6px; vertical-align:middle;"><div class="bar-fill" style="width:${p.prog}%; background:var(--blue);"></div></div>
+                <div class="p-info" style="font-size:0.9rem; margin-bottom:5px;">主诉: ${p.cc}</div>
+                <div style="font-size:0.85rem; color:#888; margin-bottom:8px; font-style:italic;">${p.hpi}</div>
+                <div style="font-size:0.9rem; margin-bottom:5px;">
+                    诊疗进度: <span style="font-weight:bold;">${p.prog}%</span>
+                    <div class="bar-bg" style="height:6px; margin-top:2px;"><div class="bar-fill" style="width:${p.prog}%; background:var(--blue);"></div></div>
                 </div>
-                <div style="font-size:0.9em; margin-bottom:5px;">
-                    生命指征: <span style="color:${vitalColor}; font-weight:bold;">${vital}</span>/100 
-                    <div class="bar-bg" style="display:inline-block; width:100px; height:6px; vertical-align:middle;"><div class="bar-fill" style="width:${vital}%; background:${vitalColor};"></div></div>
+                <div style="font-size:0.9rem; margin-bottom:10px;">
+                    生命指征: <span style="color:${vitalColor}; font-weight:bold;">${vital}</span>
+                    <div class="bar-bg" style="height:6px; margin-top:2px;"><div class="bar-fill" style="width:${vital}%; background:${vitalColor};"></div></div>
                 </div>
-                <div class="p-actions">
+                <div class="p-actions" style="display:flex; gap:5px;">
                     ${actionButtons}
                 </div>
             `;
@@ -1466,7 +1299,7 @@
         });
     }
 
-    async function admitPatient() {
+    function admitPatient() {
         const maxCap = BASE_LEVELS[camp.baseLevelIdx].wardCap;
         if(patients.length >= maxCap) return showMessage("床位已满", "无法收治更多病人。");
         if(admittedCount >= 3) return showMessage("限额已满", "每季度最多收治3人。");
@@ -1475,15 +1308,18 @@
         
         // Generate basic data
         const bedNum = findEmptyBed(maxCap);
-        // 儿科年龄0-18，其他科室0-75
         const age = player.dept === "儿科" ? randInt(0, 18) : randInt(0, 75);
         const gender = Math.random()>0.5?"男":"女";
-        // 轻症50%，中症30%，重症20%
-        const sevRoll = Math.random();
-        const sev = sevRoll < 0.5 ? 0 : (sevRoll < 0.8 ? 1 : 2);
-        const name = "P." + randInt(100,999);
         
-        // 生命指征初始值：轻症60，中症40，重症20
+        // 轻症50%概率、中症30%、重症10%
+        const sevRoll = Math.random();
+        let sev = 0; // light
+        if (sevRoll < 0.5) sev = 0; // light
+        else if (sevRoll < 0.8) sev = 1; // medium
+        else if (sevRoll < 0.9) sev = 2; // severe
+        else sev = 0; // Default to light if 90-100%
+        
+        const name = "P." + randInt(100,999);
         const vitalInit = [60, 40, 20][sev];
         
         const newPatient = {
@@ -1495,12 +1331,11 @@
             cc: "生成中...",
             hpi: "生成中...",
             prog: 0,
-            vital: vitalInit, // 生命指征
-            isDead: false // 是否死亡
+            vital: vitalInit,
+            isDead: false
         };
         
         patients.push(newPatient);
-        // Sort by bed
         patients.sort((a,b) => a.bed - b.bed);
         renderPatients();
         updateUI();
@@ -1511,10 +1346,11 @@
             科室:${player.dept}。病人:${age}岁${gender}，危急度:${["轻症","中症","重症"][sev]}。
             请返回JSON格式: {"cc":"主诉(20字内)", "hpi":"现病史(70字左右)"}`;
             
-            const res = await callDeepSeek(prompt, true);
-            newPatient.cc = res.cc;
-            newPatient.hpi = res.hpi;
-            renderPatients();
+            callDeepSeek(prompt, true).then(res => {
+                newPatient.cc = res.cc;
+                newPatient.hpi = res.hpi;
+                renderPatients();
+            });
         } catch(e) {
             newPatient.cc = "腹痛伴发热3天";
             newPatient.hpi = "患者3天前无明显诱因出现腹痛，伴发热，最高体温38.5度。";
@@ -1634,104 +1470,93 @@
     // --- 考核系统逻辑 ---
 
     function startExam() {
-        if(hasTakenExam) return showMessage("提示", "本季度已参加过考核。");
+        if (hasTakenExam) return showMessage("提示", "本季度已参加过考核。");
+        if (examQuestions.length === 0) return showMessage("提示", "题库为空，请先加载题目！");
         
         hasTakenExam = true;
         $('exam-start-area').style.display = 'none';
         $('exam-ui').style.display = 'block';
-        
-        // Check if questions available
-        if(examQuestions.length === 0) {
-            return showMessage("提示", "题库为空，请先加载题目！");
-        }
-        
         loadNextQuestion();
     }
 
     function loadNextQuestion() {
-        // Pick random
-        if(examQuestions.length === 0) {
+        if (examQuestions.length === 0) {
             showMessage("提示", "题库已用完！");
-            setTimeout(() => {
-                closeMsgModal();
-                quitExam();
-            }, 1500);
+            setTimeout(quitExam, 1500);
             return;
         }
-        const qIdx = randInt(0, examQuestions.length - 1);
-        const qData = examQuestions[qIdx];
-        
-        // Remove used
-        examQuestions.splice(qIdx, 1); // Remove to prevent repeat in one session? 
-        // Logic: Continuous correct answers.
-        
-        $('exam-q-text').innerText = qData.q;
-        const div = $('exam-options');
-        div.innerHTML = '';
-        
-        // 隐藏结果和退出按钮
+
         $('exam-result').style.display = 'none';
         $('exam-quit-btn').style.display = 'none';
-        
-        const optionLabels = ["A","B","C","D","E"];
-        qData.o.forEach((opt, idx) => {
+        $('confirm-exam-area').style.display = 'none';
+        selectedAnswerIndex = -1;
+
+        const qIdx = randInt(0, examQuestions.length - 1);
+        currentQuestion = examQuestions.splice(qIdx, 1)[0];
+
+        $('exam-q-text').innerText = currentQuestion.q;
+        const optionsDiv = $('exam-options');
+        optionsDiv.innerHTML = '';
+
+        const labels = ["A", "B", "C", "D", "E"];
+        currentQuestion.o.forEach((opt, idx) => {
             const btn = document.createElement('button');
-            btn.className = 'exam-opt';
-            btn.innerText = optionLabels[idx] + ". " + opt;
-            btn.onclick = () => checkAnswer(idx, qData.a);
-            div.appendChild(btn);
+            btn.className = 'exam-opt-btn'; // Make sure this class exists or is styled
+            btn.innerText = `${labels[idx]}. ${opt}`;
+            btn.onclick = () => selectAnswer(idx, btn);
+            optionsDiv.appendChild(btn);
         });
     }
 
-    function checkAnswer(chosen, correct) {
-        // 禁用所有选项按钮并高亮显示
-        const options = $('exam-options').querySelectorAll('.exam-opt');
-        const optionLabels = ["A","B","C","D","E"];
+    let selectedAnswerIndex = -1;
+    function selectAnswer(idx, btn) {
+        selectedAnswerIndex = idx;
+        document.querySelectorAll('.exam-opt-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        $('confirm-exam-area').style.display = 'block';
+        $('btn-confirm-answer').onclick = () => checkAnswer();
+    }
+
+    function checkAnswer() {
+        if (selectedAnswerIndex === -1) return;
         
-        options.forEach((btn, idx) => {
-            btn.disabled = true;
-            if(idx === correct) {
-                // 正确答案显示绿色
-                btn.style.background = 'var(--green)';
-                btn.style.color = 'white';
-            } else if(idx === chosen && chosen !== correct) {
-                // 错误答案显示红色
-                btn.style.background = 'var(--danger)';
-                btn.style.color = 'white';
-            }
-        });
-        
-        const resultDiv = $('exam-result');
-        resultDiv.style.display = 'block';
-        
-        if(chosen === correct) {
+        const idx = selectedAnswerIndex;
+        const correctIdx = currentQuestion.a;
+        const btns = document.querySelectorAll('.exam-opt-btn');
+        btns.forEach(btn => btn.disabled = true);
+        $('confirm-exam-area').style.display = 'none';
+
+        const resultArea = $('exam-result');
+        resultArea.style.display = 'block';
+
+        if (idx === correctIdx) {
+            btns[idx].style.background = "#2ecc71";
+            btns[idx].style.color = "white";
             examStreak++;
-            if(examStreak > maxExamStreak) maxExamStreak = examStreak;
-            updateUI();
-            resultDiv.style.background = 'var(--green)';
-            resultDiv.style.color = 'white';
-            resultDiv.innerHTML = `<strong>✓ 回答正确！</strong><br>连胜 +1，当前连胜：${examStreak}`;
-            setTimeout(() => {
-                loadNextQuestion();
-            }, 1500);
+            if (examStreak > maxExamStreak) maxExamStreak = examStreak;
+            resultArea.innerHTML = `<div style="color:#2ecc71; font-weight:bold;">✅ 回答正确！当前连胜: ${examStreak}</div>`;
+            setTimeout(loadNextQuestion, 1500);
         } else {
-            examStreak = 0; // Reset streak on fail
-            resultDiv.style.background = 'var(--danger)';
-            resultDiv.style.color = 'white';
-            resultDiv.innerHTML = `<strong>✗ 回答错误</strong><br>正确答案是: ${optionLabels[correct]}<br>本次考核结束。`;
-            // 显示退出按钮
+            btns[idx].style.background = "#e74c3c";
+            btns[idx].style.color = "white";
+            btns[correctIdx].style.background = "#2ecc71";
+            btns[correctIdx].style.color = "white";
+            
+            const labels = ["A", "B", "C", "D", "E"];
+            resultArea.innerHTML = `<div style="color:#e74c3c; font-weight:bold;">❌ 回答错误！正确答案是: ${labels[correctIdx]}</div>`;
+            examStreak = 0;
             $('exam-quit-btn').style.display = 'block';
         }
+        updateUI();
         saveGame('auto');
     }
 
     function quitExam() {
         $('exam-start-area').style.display = 'block';
         $('exam-ui').style.display = 'none';
-        // 重置结果和退出按钮
         $('exam-result').style.display = 'none';
         $('exam-quit-btn').style.display = 'none';
-        $('exam-result').innerHTML = '';
+        $('confirm-exam-area').style.display = 'none';
         updateUI();
     }
 
@@ -1775,17 +1600,42 @@
         
         $('val-refugees').innerText = camp.refugees;
         $('val-funds').innerText = '$' + camp.funds;
-        $('val-cash-char').innerText = '$' + player.cash;
-        $('val-cash-items').innerText = '$' + player.cash;
         $('val-base-lvl').innerText = BASE_LEVELS[camp.baseLevelIdx].name;
         $('val-base-lvl-num').innerText = camp.baseLevelIdx + 1;
         
-        const currentSalary = RANK_SALARIES[player.rankIndex];
-        $('val-salary').innerText = `+$${currentSalary}`;
+        // 更新个人属性显示 (工作站和补给站共享)
+        ['work', 'supply'].forEach(suffix => {
+            if($(`val-cash-${suffix}`)) $(`val-cash-${suffix}`).innerText = '$' + player.cash;
+            if($(`val-health-${suffix}`)) $(`val-health-${suffix}`).innerText = player.health;
+            if($(`bar-health-${suffix}`)) $(`bar-health-${suffix}`).style.width = player.health + '%';
+            if($(`val-energy-${suffix}`)) $(`val-energy-${suffix}`).innerText = player.energy;
+            if($(`bar-energy-${suffix}`)) $(`bar-energy-${suffix}`).style.width = player.energy + '%';
+        });
+
+        // 档案界面
+        $('char-name-display').innerText = player.name;
+        $('char-gender-display').innerText = player.gender;
+        $('char-dept-display').innerText = player.dept;
+        $('char-icon').innerText = player.gender === "女" ? "👩‍⚕️" : "👨‍⚕️";
         
+        $('summary-cured-archive').innerText = player.stats.cured || 0;
+        $('summary-quarters-archive').innerText = player.stats.totalQuarters || 0;
+        $('summary-max-rank-archive').innerText = player.rankIndex + 1;
+
+        // 工作站数值
+        $('val-med-work').innerText = player.med;
+        $('val-admin-work').innerText = player.admin;
+        $('val-soc-work').innerText = player.soc;
+
+        // 晋级界面
+        $('val-rank-name').innerText = CONFIG.ranks[player.rankIndex];
+        $('val-rank-lvl').innerText = player.rankIndex + 1;
+        $('val-favor').innerText = player.favor;
+        $('bar-favor').style.width = player.favor + '%';
+        $('val-max-streak').innerText = maxExamStreak;
         $('curr-streak').innerText = examStreak;
         $('best-streak').innerText = maxExamStreak;
-        $('val-max-streak').innerText = maxExamStreak;
+        $('val-salary-promo').innerText = `$${RANK_SALARIES[player.rankIndex]}`;
 
         // Ward UI
         const wardCap = BASE_LEVELS[camp.baseLevelIdx].wardCap;
@@ -1800,34 +1650,17 @@
             let bar = $('bar-' + id.replace('val-',''));
             if(bar) {
                 bar.style.width = Math.max(0, Math.min(100, val)) + '%';
-                bar.className = 'bar-fill';
-                if (isReverse) { 
-                    if(val > 70) bar.classList.add('low'); else if(val < 30) bar.classList.add('high');
-                } else { 
-                    if(val < 30) bar.classList.add('low'); else if(val > 70) bar.classList.add('high');
-                }
             }
         };
 
         updateBar('val-tension', camp.tension, true);
         updateBar('val-supplies', camp.supplies);
         updateBar('val-water', camp.water);
-        updateBar('val-health', player.health);
-        updateBar('val-energy', player.energy);
-        updateBar('val-med', player.med);
-        updateBar('val-admin', player.admin);
-        updateBar('val-soc', player.soc);
         
         // 嫌疑度 UI
-        $('val-suspicion').innerText = player.suspicion;
-        $('bar-suspicion').style.width = Math.min(100, player.suspicion) + '%';
+        if($('val-suspicion')) $('val-suspicion').innerText = player.suspicion;
+        if($('bar-suspicion')) $('bar-suspicion').style.width = Math.min(100, player.suspicion) + '%';
         
-        // 职级UI
-        $('val-rank-name').innerText = CONFIG.ranks[player.rankIndex];
-        $('val-rank-lvl').innerText = player.rankIndex + 1;
-        $('val-favor').innerText = player.favor;
-        $('bar-favor').style.width = player.favor + '%';
-
         // 成就系统渲染
         const achList = $('achievement-list');
         if(achList) {
@@ -1843,7 +1676,6 @@
                 
                 let percent = Math.floor(Math.min(100, (current / ach.target) * 100));
                 
-                // 特殊逻辑：至公无私成就要到游戏结束才算100%
                 if(ach.id === 'honest' && !isVictoryPending) {
                     percent = 0;
                 }
@@ -1872,15 +1704,9 @@
                 achList.appendChild(item);
             });
 
-            // 总达成率
             const totalPercent = Math.floor((unlockedCount / ACHIEVEMENTS_DEF.length) * 100);
             if($('total-achieve-bar')) $('total-achieve-bar').style.width = totalPercent + '%';
             if($('total-achieve-text')) $('total-achieve-text').innerText = totalPercent + '%';
-
-            // 履历汇总
-            if($('summary-cured')) $('summary-cured').innerText = player.stats.cured || 0;
-            if($('summary-quarters')) $('summary-quarters').innerText = player.stats.totalQuarters || 0;
-            if($('summary-max-rank')) $('summary-max-rank').innerText = player.rankIndex + 1;
         }
         
         // 商店按钮状态
@@ -1888,16 +1714,7 @@
             const btn = $('btn-buy-' + item.id);
             if(btn) {
                 let price = item.price;
-                let fundSource = (item.type === 'base') ? camp.funds : player.cash; // Wait, actually logic says base funds buy equip
-                
-                // Logic correction: 
-                // Consumables (type 'cons') -> Player Cash? No prompt says "Base funds buy supplies/water" in Prompt 7
-                // Wait. Prompt 7: "1. base funds buy supplies/water... 2. permanent base upgrades... cost 10000"
-                // So Base Items use Camp Funds. Personal Items use Player Cash.
-                
-                if (item.id === 'supplies' || item.id === 'water') {
-                    // Handled by buyBaseItem buttons separately
-                } else if (item.type === 'base') {
+                if (item.type === 'base') {
                      if (camp.funds < price) btn.style.opacity = "0.5"; else btn.style.opacity = "1";
                 } else {
                      if (player.items.includes(item.id)) { btn.disabled = true; btn.innerText = "已拥有"; }
@@ -1909,10 +1726,6 @@
         // 晋升状态
         let promoText = "";
         const seasonIdx = (currentQuarter - 1) % 4; // 2 is Autumn
-        const nextRankReq = RANK_REQ_STREAK[player.rankIndex]; // Req to go to next level? 
-        // Array index 0 is rank 1. Req for rank 2 is index 1?
-        // RANK_REQ_STREAK = [0, 3, 5, 10, 15, 20]
-        // Current Rank Index 0 (Lv1). Target Rank Index 1 (Lv2). Need streak 3 (idx 1).
         const reqStreak = RANK_REQ_STREAK[player.rankIndex + 1] || 0;
 
         if (player.rankIndex >= 5) {
@@ -1941,17 +1754,6 @@
              }
         }
         $('promo-status').innerText = promoText;
-
-        const restBtn = $('btn-rest');
-        if (hasRestedToday) {
-            restBtn.disabled = true;
-            restBtn.innerText = "🛌 休息 (本季已休)";
-            restBtn.style.background = "#555";
-        } else {
-            restBtn.disabled = false;
-            restBtn.innerText = "🛌 休息 (本季限一次)";
-            restBtn.style.background = "var(--green)";
-        }
         
         updateSliderUI('don');
     }
@@ -2100,7 +1902,6 @@
         $('game-screen').classList.remove('active');
         $('end-screen').classList.add('active');
         $('bottom-nav').style.display = 'none';
-        $('exit-game-btn').style.display = 'none';
         $('end-reason').innerText = reason;
         
         // 根据类型设置不同颜色
@@ -2151,66 +1952,29 @@
         saveGame('auto');
     }
 
-    function doRest() {
-        if(hasRestedToday) return showMessage("提示", "本季度已经休息过了！");
-
-        hasRestedToday = true; 
-        applyChanges({ health: 5, energy: 5 });
-
-        let listHtml = `<li class="change-item"><span class="change-name">健康恢复</span> <span class="change-val val-up">+5</span></li>` +
-                       `<li class="change-item"><span class="change-name">精力恢复</span> <span class="change-val val-up">+5</span></li>`;
-        showCustomModal(listHtml, "休整结束", "虽然只有短暂的休息，但感觉好多了。");
-        updateUI(); 
-        saveGame('auto');
-    }
-
     function interactBoss(type) {
         if (type === 'network') {
-            if (player.energy < 3) return showMessage("状态不佳", "精力太差，不适合社交。");
-            
-            let randBase = randInt(-3, 3);
-            let socBonus = Math.floor(player.soc * 0.1);
-            let gain = randBase + socBonus;
-
-            let oldFavor = player.favor;
-            player.favor = Math.min(100, Math.max(0, player.favor + gain));
-            applyChanges({ energy: -3 });
-            
-            let actualChange = player.favor - oldFavor;
-            let listHtml = `<li class="change-item"><span class="change-name">上级好感</span> <span class="change-val ${actualChange>=0?'val-up':'val-down'}">${actualChange>=0?'+':''}${actualChange}</span></li>` +
-                           `<li class="change-item"><span class="change-name">精力</span> <span class="change-val val-down">-3</span></li>`;
-            
-            let desc = actualChange > 0 ? "沟通非常顺利，上级对你的印象加深了。" : (actualChange < 0 ? "也许是说话方式不对，气氛变得尴尬了。" : "这是一次平淡的谈话。");
-            showCustomModal(listHtml, "人际交往", desc);
-
+            if (player.energy < 20) return showMessage("状态不佳", "精力不足，不适合社交。");
+            let gain = randInt(5, 9) + Math.floor(player.soc * 0.1);
+            applyChanges({ favor: gain, energy: -20 }, "联络感情");
         } else if (type === 'fund') {
-            if (player.favor < 3) return showMessage("请求被拒", "上级对你的好感不足，不愿受理请求。");
-            
-            player.favor -= 3;
+            if (player.favor < 30) return showMessage("请求被拒", "上级对你的信任不足(需30好感)。");
             let success = (Math.random() * 100) < player.favor;
-            
-            let listHtml = `<li class="change-item"><span class="change-name">上级好感</span> <span class="change-val val-down">-3</span></li>`;
-            let msg = "";
-            let title = "";
-            
             if (success) {
-                let amount = randInt(500, 1000);
-                camp.funds += amount;
-                title = "申请批准";
-                msg = `上级批准了你的特别资金申请。`;
-                listHtml += `<li class="change-item"><span class="change-name">基地资金</span> <span class="change-val val-up">+$${amount}</span></li>`;
+                let amount = 1000 + (player.soc * 50);
+                applyChanges({ funds: amount, favor: -30 }, "请求资金");
             } else {
-                title = "申请驳回";
-                msg = "上级认为目前不需要额外拨款。";
+                applyChanges({ favor: -5 }, "请求资金(被拒)");
+                showMessage("申请驳回", "上级认为目前不需要额外拨款。");
             }
-            updateUI();
-            showCustomModal(listHtml, title, msg);
         }
         saveGame('auto');
     }
 
     function applyForPromotion() {
-        // Check strict streak req
+        const season = ["春", "夏", "秋", "冬"][(currentQuarter-1)%4];
+        if (season !== "秋") return showMessage("未开放", "晋升申请仅在秋季开放。");
+        
         const reqStreak = RANK_REQ_STREAK[player.rankIndex + 1] || 0;
         if (maxExamStreak < reqStreak) {
             return showMessage("条件不足", `当前职级晋升需要最高连胜达到 ${reqStreak} 次。`);
@@ -2218,7 +1982,7 @@
         if (player.favor < 40) return showMessage("好感不足", "申请晋升需要消耗40点上级好感度。");
 
         player.appliedPromo = true;
-        player.favor -= 40; 
+        applyChanges({ favor: -40 }, "提交晋升申请");
         player.lastPromoQuarter = currentQuarter; 
         updateUI();
         saveGame('auto');
@@ -2228,26 +1992,24 @@
     function processPromotion() {
         if (!player.appliedPromo) return;
         
-        // Hard requirement: Streak. Assuming checked at apply time, but check again for safety
         const reqStreak = RANK_REQ_STREAK[player.rankIndex + 1] || 0;
-        
         let success = (maxExamStreak >= reqStreak);
         let logText = "";
         let resultHtml = "";
         
         if (success) {
             player.rankIndex++;
-            // 40好感度已在申请时扣除，成功后不再扣除
-            logText = `恭喜！你的晋升申请通过了。现任职级：${CONFIG.ranks[player.rankIndex]}。薪水提升至 $${RANK_SALARIES[player.rankIndex]}。`;
-            addAchievement(`第${Math.ceil(currentQuarter/4)}年: 晋升为 ${CONFIG.ranks[player.rankIndex]}`);
+            logText = `恭喜！你的晋升申请通过了。现任职级：${RANKS[player.rankIndex]}。`;
+            addAchievement(`第${Math.ceil(currentQuarter/4)}年: 晋升为 ${RANKS[player.rankIndex]}`);
             resultHtml = `<li class="change-item"><span class="change-name">职级</span> <span class="change-val val-up">晋升</span></li>`;
         } else {
             logText = `很遗憾，你的晋升申请被驳回。需在考核中证明自己(最高连胜>=${reqStreak})。`;
             resultHtml = `<li class="change-item"><span class="change-name">结果</span> <span class="change-val val-down">失败</span></li>`;
         }
         
-        showCustomModal(resultHtml, "年度考核结果", logText);
+        showCustomModal(resultHtml, "年度晋升考核", logText);
         player.appliedPromo = false;
+        updateUI();
     }
     
     function addAchievement(text) {
@@ -2372,30 +2134,44 @@
         player.stats.totalQuarters = (player.stats.totalQuarters || 0) + 1;
         player.stats.currentLocQuarters++;
         
+        let report = [];
+        const timeInfo = getSeasonInfo();
+        const periodName = `第${timeInfo.year}年 ${timeInfo.season}`;
+
         // 增加调任逻辑 (要求4)
         if(player.stats.currentLocQuarters >= 12) {
             addTransferButton();
         }
         
-        // 1. 本季度结算：扣除个人生活费
-        player.cash -= 50;
+        // 1. 本季度结算：不再扣除个人生活费
+        // player.cash -= 50;
+        
+        // 季度薪水发放
+        const salary = RANK_SALARIES[player.rankIndex];
+        player.cash += salary;
+        report.push({ name: "季度薪水发放", val: `+$${salary}`, type: "up" });
 
         // 2. 基地资金消耗计算
         let fundCost = 1000 - (player.admin * 10) + (camp.tension * 10);
         if (fundCost < 0) fundCost = 100; // 最低消耗
         camp.funds -= fundCost;
+        report.push({ name: "基地运营成本", val: `-$${fundCost}`, type: "down" });
 
-        // 难民自然衰减
+        // 3. 难民自然衰减
         const decayRef = randInt(5, 10);
         camp.refugees = Math.max(0, camp.refugees - decayRef);
+        report.push({ name: "难民自然变动", val: `-${decayRef}`, type: "down" });
         
         // 物资与净水自然衰减：随机(3-6)
         const decaySupplies = randInt(3, 6);
         const decayWater = randInt(3, 6);
         camp.supplies = Math.max(0, camp.supplies - decaySupplies);
         camp.water = Math.max(0, camp.water - decayWater);
+        report.push({ name: "物资自然损耗", val: `-${decaySupplies}%`, type: "down" });
+        report.push({ name: "净水自然损耗", val: `-${decayWater}%`, type: "down" });
         
         // 病人生命指征衰减
+        let deathCount = 0;
         patients.forEach(p => {
             if(p.isDead) return;
             // 衰减量：轻症5-10，中症10-15，重症15-20
@@ -2404,46 +2180,39 @@
             const decay = randInt(min, max);
             p.vital = (p.vital || 60) - decay;
             
-            // 生命指征≤0，病人死亡
             if(p.vital <= 0) {
                 p.vital = 0;
                 p.isDead = true;
                 player.stats.deaths = (player.stats.deaths || 0) + 1;
-                addLog(`💀 ${p.bed}床病人因病情恶化死亡。`);
+                deathCount++;
             }
-            // 重置每季度治疗次数
             p.treatCount = 0;
         });
-        renderPatients();
-        
+        if(deathCount > 0) report.push({ name: "病患死亡数", val: `-${deathCount}`, type: "down" });
+
         // 触发特殊事件
         await checkSpecialEvents();
 
         if (!checkGameOver()) return;
         
-        $('next-day-btn').style.display = 'none';
-        $('next-quarter-msg').style.display = 'none';
-        $('event-area').style.display = 'none';
-        $('start-event-btn').style.display = 'block'; 
-        isEventResolved = false;
-        hasRestedToday = false; 
-        admittedCount = 0; // Reset admissions
-        hasRounded = false; // Reset rounds
-        hasTakenExam = false; // Reset exam attempt (streak preserved if didn't fail)
-
-        // 3. 基地固定拨款 (新季度资金)
-        camp.funds += 1000;
+        // 4. 基地季度拨款 +2000
+        camp.funds += 2000;
+        report.push({ name: "总部季度拨款", val: "+$2000", type: "up" });
         
-        // 增加季度
+        // 5. 身心自动恢复 +10
+        player.health = Math.min(100, player.health + 10);
+        player.energy = Math.min(100, player.energy + 10);
+        report.push({ name: "身心自动恢复", val: "+10", type: "up" });
+
+        // 6. 重置本季行动限制
+        player.quarterlyActions = { running: 0, sleep: 0 };
+
+        // 季度增加
         currentQuarter++;
 
-        // 4. 个人薪水发放 (新季度开始)
-        const salary = RANK_SALARIES[player.rankIndex];
-        player.cash += salary;
-
-        // 5. 嫌疑度自然衰减
-        let decay = randInt(3, 7);
-        player.suspicion = Math.max(0, player.suspicion - decay);
+        // 7. 嫌疑度自然衰减
+        let susDecay = randInt(3, 7);
+        player.suspicion = Math.max(0, player.suspicion - susDecay);
         
         // 危险度自然增长
         if ((currentQuarter - 1) % 4 === 0) { 
@@ -2466,9 +2235,34 @@
                 $('investigation-modal').style.display = 'flex';
             }
         } else {
+            // 显示经营报告
+            showQuarterlyReport(periodName, report);
             switchNav('event');
         }
+
+        $('next-day-btn').style.display = 'none';
+        $('next-quarter-msg').style.display = 'none';
+        $('event-area').style.display = 'none';
+        $('start-event-btn').style.display = 'block'; 
+        isEventResolved = false;
+        admittedCount = 0;
+        hasRounded = false;
+        hasTakenExam = false;
+
         saveGame('auto');
+    }
+
+    function showQuarterlyReport(period, reportData) {
+        $('report-period').innerText = period + " 经营结余报告";
+        const list = $('report-list');
+        list.innerHTML = '';
+        reportData.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'change-item';
+            li.innerHTML = `<span class="change-name">${item.name}</span> <span class="change-val val-${item.type}">${item.val}</span>`;
+            list.appendChild(li);
+        });
+        $('quarterly-report-modal').style.display = 'flex';
     }
 
     function addTransferButton() {
@@ -2634,10 +2428,34 @@
         };
     }
 
-    function applyChanges(effects) {
+    function applyChanges(effects, reason = "属性变化") {
+        let logParts = [];
+        const map = { health: "健康", energy: "精力", supplies: "物资", water: "净水", tension: "紧张度", refugees: "难民", funds: "基地资金", favor: "好感", med:"医学", admin:"行政", soc:"社交", cash:"个人存款", suspicion:"嫌疑" };
+        
         for(let key in effects) {
-            if(player[key] !== undefined) player[key] += effects[key];
-            if(camp[key] !== undefined) camp[key] += effects[key];
+            let val = effects[key];
+            if(val === 0) continue;
+            
+            if(player[key] !== undefined) {
+                player[key] += val;
+                // Clamp certain values
+                if(['health', 'energy', 'med', 'admin', 'soc'].includes(key)) {
+                    player[key] = Math.max(0, Math.min(100, player[key]));
+                }
+            }
+            if(camp[key] !== undefined) {
+                camp[key] += val;
+                if(['supplies', 'water', 'tension'].includes(key)) {
+                    camp[key] = Math.max(0, Math.min(100, camp[key]));
+                }
+            }
+            
+            let displayVal = (key === 'funds' || key === 'cash') ? '$' + val : val;
+            logParts.push(`${map[key]||key} ${val>0?'+':''}${displayVal}`);
+        }
+        
+        if (logParts.length > 0) {
+            showMessage(reason, logParts.join("，"));
         }
         updateUI();
     }
@@ -2655,7 +2473,7 @@
         $('result-text').innerText = description;
         
         let hasContent = false;
-        const map = { health: "健康", energy: "精力", supplies: "物资", water: "净水", tension: "紧张度", refugees: "难民", funds: "资金", favor: "好感", med:"医学", admin:"行政", soc:"社交", cash:"金钱", suspicion:"嫌疑" };
+        const map = { health: "健康", energy: "精力", supplies: "物资", water: "净水", tension: "紧张度", refugees: "难民", funds: "基地资金", favor: "上级好感", med:"医学", admin:"行政", soc:"社交", cash:"个人存款", suspicion:"嫌疑" };
         for(let key in effects) {
             let val = effects[key];
             if(val === 0) continue;
@@ -2665,16 +2483,31 @@
             
             let li = document.createElement('li');
             li.className = 'change-item';
-            let displayVal = val;
-            if (key === 'funds' || key === 'cash') displayVal = '$' + val;
+            let displayVal = Math.abs(val);
+            if (key === 'funds' || key === 'cash') displayVal = '$' + displayVal;
             
-            li.innerHTML = `<span class="change-name">${map[key]||key}</span><span class="change-val ${isGood?'val-up':'val-down'}">${val>0?'+':''}${displayVal}</span>`;
+            li.innerHTML = `<span class="change-name">${map[key]||key}</span><span class="change-val ${isGood?'val-up':'val-down'}">${val>0?'+':'-'}${displayVal}</span>`;
             list.appendChild(li);
         }
         if(!hasContent) list.innerHTML = '<li class="change-item">无显著数值变化</li>';
         
         $('result-modal').querySelector('.modal-header').innerText = title;
         $('result-modal').style.display = 'flex';
+    }
+
+    function doTrainingAction(type) {
+        if(!player.quarterlyActions) player.quarterlyActions = { running: 0, sleep: 0 };
+        
+        if(type === 'running') {
+            if(player.quarterlyActions.running >= 1) return showMessage("提示", "本季度已跑过步了。");
+            player.quarterlyActions.running++;
+            applyChanges({ health: 5 }, "跑步健身");
+        } else if(type === 'sleep') {
+            if(player.quarterlyActions.sleep >= 1) return showMessage("提示", "本季度已睡过好觉了。");
+            player.quarterlyActions.sleep++;
+            applyChanges({ energy: 5 }, "睡个好觉");
+        }
+        saveGame('auto');
     }
     
     function showCustomModal(html, title, description) {
@@ -2704,7 +2537,6 @@
             $('game-screen').classList.remove('active');
             $('end-screen').classList.add('active');
             $('bottom-nav').style.display = 'none';
-            $('exit-game-btn').style.display = 'none';
             $('end-reason').innerText = reason;
             $('end-title').style.color = "var(--primary)";
             $('end-title').innerText = "行动失败";
@@ -2723,7 +2555,6 @@
              $('game-screen').classList.remove('active');
              $('end-screen').classList.add('active');
              $('bottom-nav').style.display = 'none';
-             $('exit-game-btn').style.display = 'none';
              $('end-title').style.color = "var(--green)";
              $('end-title').innerText = "光荣退休";
              $('end-reason').innerText = `你已成为区域总筹并稳定维持了局势。你是非凡的指挥官。`;
@@ -2739,7 +2570,6 @@
         $('end-screen').classList.remove('active');
         $('game-screen').classList.add('active');
         $('bottom-nav').style.display = 'grid';
-        $('exit-game-btn').style.display = 'block';
         saveGame('auto'); 
         switchNav('event');
     }
