@@ -66,12 +66,12 @@
                         <div>
                             <strong>科室:</strong>
                             <select id="select-dept" style="padding:8px; background:var(--panel); color:var(--text); border:1px solid var(--border); border-radius:4px; font-size:1rem; margin-left:5px;">
+                                <option value="全科">全科</option>
                                 <option value="内科">内科</option>
                                 <option value="外科">外科</option>
                                 <option value="传染科">传染科</option>
                                 <option value="儿科">儿科</option>
                                 <option value="妇产科">妇产科</option>
-                                <option value="骨科">骨科</option>
                                 <option value="急诊科">急诊科</option>
                             </select>
                         </div>
@@ -149,15 +149,15 @@
 
         <div id="tab-character" class="tab-content">
             <div class="sub-tab-nav" style="display:flex; gap:10px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px;">
-                <button class="nav-item active" onclick="switchCharSubTab('archive', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">档案</button>
-                <button class="nav-item" onclick="switchCharSubTab('workstation', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">工作站</button>
-                <button class="nav-item" onclick="switchCharSubTab('supply', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">补给站</button>
-                <button class="nav-item" onclick="switchCharSubTab('promo', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">职业晋级</button>
+                <button class="nav-item active char-nav-btn" onclick="switchCharSubTab('archive', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">档案</button>
+                <button class="nav-item char-nav-btn" onclick="switchCharSubTab('workstation', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">工作站</button>
+                <button class="nav-item char-nav-btn" onclick="switchCharSubTab('supply', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">补给站</button>
+                <button class="nav-item char-nav-btn" onclick="switchCharSubTab('promo', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">职业</button>
             </div>
 
             <div id="char-archive" class="char-sub-tab active">
                 <div class="resume-card" style="background:var(--panel); border:1px solid var(--border); padding:20px; border-radius:8px; display:flex; gap:20px; align-items: flex-start; margin-bottom:20px;">
-                    <div id="char-icon" style="font-size:4rem; background:var(--input-bg); width:100px; height:100px; display:flex; align-items:center; justify-content:center; border-radius:8px;">👩‍⚕️</div>
+                    <div id="char-icon" style="font-size:4rem; background:var(--input-bg); width:100px; height:100px; display:flex; align-items:center; justify-content:center; border-radius:8px; cursor:pointer;" onmousedown="startDevPress()" onmouseup="endDevPress()" onmouseleave="endDevPress()" ontouchstart="startDevPress()" ontouchend="endDevPress()">👩‍⚕️</div>
                     <div style="flex:1;">
                         <h2 id="char-name-display" style="margin:0 0 10px 0; color:var(--gold);">姓名</h2>
                         <div style="font-size:1.1rem; color:var(--text); opacity:0.8;">
@@ -208,7 +208,7 @@
 
             <div id="char-supply" class="char-sub-tab" style="display:none;">
                 <div style="display:flex; gap:15px; margin-bottom:20px; background:var(--panel); padding:15px; border-radius:8px; border:1px solid var(--border);">
-                    <img src="image/supply1.png" alt="补给站" style="width:100px; height:100px; border-radius:4px; object-fit:cover; flex-shrink:0;">
+                    <img id="img-supply" src="image/supply1.png" alt="补给站" style="width:100px; height:100px; border-radius:4px; object-fit:cover; flex-shrink:0;">
                     <div style="flex:1;">
                         <div style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">个人存款: <span id="val-cash-supply" style="color:var(--gold);">$0</span></div>
                         <div class="stat-box" style="margin-bottom:10px; padding:5px; background:none; border:none;">❤️ 健康 <span style="float:right;" id="val-health-supply">0</span><div class="bar-bg" style="height:6px;"><div class="bar-fill" id="bar-health-supply"></div></div></div>
@@ -230,9 +230,12 @@
                     
                     <div class="rank-actions">
                         <button style="font-size:0.9rem; padding:8px;" onclick="interactBoss('network')">🤝 联络感情</button>
-                        <button style="font-size:0.9rem; padding:8px;" onclick="interactBoss('fund')">💰 请求资金</button>
+                        <div style="display:flex; gap:5px;">
+                            <button style="font-size:0.9rem; padding:8px; flex:1;" onclick="interactBoss('fund')">💰 请求资金</button>
+                            <button style="font-size:0.9rem; padding:8px; flex:1;" onclick="interactBoss('bribe')">🤝 贿赂</button>
+                        </div>
                     </div>
-                    <button id="btn-promo" style="width:100%; margin-top:10px; background:var(--blue); color:white;" onclick="applyForPromotion()">⬆️ 申请晋升 (仅秋季开放)</button>
+                    <button id="btn-promo" style="width:100%; margin-top:10px; background:var(--blue); color:white;" onclick="applyForPromotion()">⬆️ 申请晋升</button>
                     <div id="promo-status" style="font-size:0.8em; color:#888; margin-top:5px;"></div>
                 </div>
 
@@ -270,20 +273,43 @@
         </div>
 
         <div id="tab-base" class="tab-content">
-            <div class="stat-box" style="margin-bottom:15px; border-left-color:var(--gold);">
-                <div>💰 基地资金: <span id="val-funds" style="font-weight:bold; color:var(--gold); cursor:pointer;" onclick="handleFundsClick()">$10000</span></div>
-                <div style="font-size:0.9em; margin-top:5px;">🏰 等级: <span id="val-base-lvl">基础医疗点</span> (Lv.<span id="val-base-lvl-num">1</span>)</div>
-                <div style="font-size:0.8em; color:#888;">每季消耗: $1000 - (行政x10) + (紧张x10) | 拨款 +$2000</div>
+            <div class="sub-tab-nav" style="display:flex; gap:10px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+                <button class="nav-item active" onclick="switchBaseSubTab('mgmt', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">管理</button>
+                <button class="nav-item" onclick="switchBaseSubTab('ward', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">病房</button>
+                <button class="nav-item" onclick="switchBaseSubTab('procure', this)" style="flex:1; padding:10px; background:none; border:none; color:var(--text); font-size:0.9rem;">采购</button>
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-box">🤒 难民 <span style="float:right; font-weight:bold;" id="val-refugees">0</span></div>
-                <div class="stat-box">😠 紧张 <span style="float:right;" id="val-tension">0%</span><div class="bar-bg"><div class="bar-fill" id="bar-tension"></div></div></div>
-                <div class="stat-box">📦 物资 <span style="float:right;" id="val-supplies">0%</span><div class="bar-bg"><div class="bar-fill" id="bar-supplies"></div></div></div>
-                <div class="stat-box">💧 净水 <span style="float:right;" id="val-water">0%</span><div class="bar-bg"><div class="bar-fill" id="bar-water"></div></div></div>
+            <div id="base-mgmt" class="base-sub-tab active">
+                <div style="background:var(--panel); border:1px solid var(--border); padding:12px 15px; border-radius:6px; margin-bottom:15px; text-align:center;">
+                    <div style="font-size:1.2rem; font-weight:bold; color:var(--gold);">
+                        <span id="val-base-lvl">基础医疗点</span> (Lv.<span id="val-base-lvl-num">1</span>)
+                    </div>
+                </div>
+                <img id="img-base" src="image/base1.png" alt="基地俯瞰" style="width:100%; aspect-ratio: 2816/1536; border-radius:8px; object-fit:cover; margin-bottom:15px; border:1px solid var(--border);">
+                
+                <div class="stat-box" style="margin-bottom:15px; border-left-color:var(--gold);">
+                    <div>💰 基地资金: <span id="val-funds" style="font-weight:bold; color:var(--gold); cursor:pointer;" onclick="handleFundsClick()">$10000</span></div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">🤒 难民 <span style="float:right; font-weight:bold;" id="val-refugees">0</span></div>
+                    <div class="stat-box">😠 紧张 <span style="float:right;" id="val-tension">0%</span><div class="bar-bg"><div class="bar-fill" id="bar-tension"></div></div></div>
+                    <div class="stat-box">📦 物资 <span style="float:right;" id="val-supplies">0%</span><div class="bar-bg"><div class="bar-fill" id="bar-supplies"></div></div></div>
+                    <div class="stat-box">💧 净水 <span style="float:right;" id="val-water">0%</span><div class="bar-bg"><div class="bar-fill" id="bar-water"></div></div></div>
+                </div>
+
+                <h4 style="margin-top:20px;">基地行动 (消耗资源/精力)</h4>
+                <button class="action-btn" onclick="doAction('distribute_food')"><span>🥣 分发物资</span><span style="font-size:0.8em; color:#888;">物资-5, 紧张减少受社交加成</span></button>
+                <button class="action-btn" onclick="doAction('distribute_water')"><span>🚰 提供净水</span><span style="font-size:0.8em; color:#888;">水-5, 紧张减少受社交加成</span></button>
+                <button class="action-btn" onclick="doAction('transport')"><span>🚙 接收空投物资</span><span style="font-size:0.8em; color:#888;">物资/水+10, 健康-5</span></button>
+                <button class="action-btn" onclick="doAction('pacify')"><span>🕊️ 安抚民众</span><span style="font-size:0.8em; color:#888;">紧张-5, 精力-10</span></button>
+                <button class="action-btn" onclick="doAction('rescue')"><span>🚑 前线救援</span><span style="font-size:0.8em; color:#888;">健康-10, 难民+10</span></button>
+                <button class="action-btn" onclick="doAction('big_spender')"><span>💸 大撒币行动</span><span style="font-size:0.8em; color:#888;">资金-1000, 紧张-8</span></button>
             </div>
-            
-            <div id="tab-ward-inner">
+
+            <div id="base-ward" class="base-sub-tab" style="display:none;">
+                <img id="img-ward" src="image/ward1.png" alt="病房" style="width:100%; height:150px; border-radius:8px; object-fit:cover; margin-bottom:15px; border:1px solid var(--border);">
+                
                 <div class="stat-box" style="margin-bottom:15px; border-left-color:var(--blue);">
                     🏥 住院部: <span id="ward-count">0</span> / <span id="ward-cap">20</span>
                     <span style="float:right; font-size:0.8em; color:#aaa;" id="ward-limit-msg">本季收治: 0/3</span>
@@ -291,59 +317,57 @@
                 
                 <div style="display:flex; gap:10px; margin-bottom:15px;">
                     <button class="action-btn" style="flex:1; justify-content:center; background:var(--blue); color:white;" onclick="admitPatient()">➕ 收入院</button>
-                    <button class="action-btn" id="btn-rounds" style="flex:1; justify-content:center; background:var(--purple); color:white;" onclick="doRounds()">🩺 查房 (消耗物资/健康)</button>
+                    <button class="action-btn" id="btn-rounds" style="flex:1; justify-content:center; background:var(--purple); color:white;" onclick="doRounds()">🩺 查房</button>
                 </div>
                 
                 <div id="patient-list"></div>
             </div>
 
-            <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;">
-
-            <h4>基地行动 (消耗资源/精力)</h4>
-            <button class="action-btn" onclick="doAction('distribute_food')"><span>🥣 分发口粮与药品</span><span style="font-size:0.8em; color:#888;">物资-5, 紧张减少受社交加成</span></button>
-            <button class="action-btn" onclick="doAction('distribute_water')"><span>🚰 提供净水</span><span style="font-size:0.8em; color:#888;">水-5, 紧张减少受社交加成</span></button>
-            <button class="action-btn" onclick="doAction('transport')"><span>🚙 接收空投物资</span><span style="font-size:0.8em; color:#888;">物资/水+10, 健康-5</span></button>
-            <button class="action-btn" onclick="doAction('pacify')"><span>🕊️ 安抚民众</span><span style="font-size:0.8em; color:#888;">紧张-5, 精力-10</span></button>
-            <button class="action-btn" onclick="doAction('rescue')"><span>🚑 前线救援</span><span style="font-size:0.8em; color:#888;">健康-10, 难民+10</span></button>
-            <button class="action-btn" onclick="doAction('big_spender')"><span>💸 大撒币行动</span><span style="font-size:0.8em; color:#888;">资金-1000, 紧张-8</span></button>
-            
-            <h4 style="margin-top:20px; color:var(--gold);">资金操作</h4>
-
-            <div class="slider-container" style="border-left:4px solid var(--green);">
-                <div style="margin-bottom:5px;">🤝 捐赠资金 <span id="don-val" class="slider-val">0%</span></div>
-                <input type="range" id="don-slider" min="0" max="100" value="0" oninput="updateSliderUI('don')">
-                <div style="font-size:0.8em; color:#aaa;">个人捐出 <span id="don-give">$0</span> -> 基地获得 <span id="don-get">$0</span></div>
-                <button class="action-btn" style="margin-top:5px; justify-content:center; border-color:var(--green);" onclick="commitDonate()">确认捐赠</button>
-            </div>
-
-            <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;">
-
-            <h3>🛒 采购 (基地资金)</h3>
-            <div class="item-grid" style="margin-bottom:20px;">
-                <div class="item-card">
-                    <div><div class="item-name">📦 购买物资包</div><div class="item-price">基地资金 $500</div><div class="item-desc">物资 +5</div></div>
-                    <button class="buy-btn" onclick="buyBaseItem('supplies')">购买</button>
+            <div id="base-procure" class="base-sub-tab" style="display:none;">
+                <div style="display:flex; gap:15px; margin-bottom:20px; background:var(--panel); padding:15px; border-radius:8px; border:1px solid var(--border); align-items:flex-start;">
+                    <img src="image/place.png" alt="采购" style="width:50%; aspect-ratio: 1; border-radius:4px; object-fit:cover; flex-shrink:0;">
+                    <div style="flex:1; display:flex; flex-direction:column;">
+                        <div style="font-size:1.1rem; font-weight:bold; margin-bottom:10px;">基地资金: <span id="val-funds-procure" style="color:var(--gold);">$0</span></div>
+                        <div class="stat-box" style="margin-bottom:10px; padding:5px; background:none; border:none;">📦 物资 <span style="float:right;" id="val-supplies-procure">0%</span><div class="bar-bg" style="height:6px;"><div class="bar-fill" id="bar-supplies-procure"></div></div></div>
+                        <div class="stat-box" style="margin-bottom:15px; padding:5px; background:none; border:none;">💧 净水 <span style="float:right;" id="val-water-procure">0%</span><div class="bar-bg" style="height:6px;"><div class="bar-fill" id="bar-water-procure"></div></div></div>
+                        
+                        <h4 style="margin:0 0 10px 0; color:var(--green); font-size:1rem;">💰 捐赠支持</h4>
+                        <div class="slider-container" style="border-left:4px solid var(--green); margin:0;">
+                            <div style="margin-bottom:5px;">🤝 捐赠个人资金 <span id="don-val" class="slider-val">0%</span></div>
+                            <input type="range" id="don-slider" min="0" max="100" value="0" oninput="updateSliderUI('don')">
+                            <div style="font-size:0.8em; color:#aaa;">个人捐出 <span id="don-give">$0</span> -> 基地获得 <span id="don-get">$0</span></div>
+                            <button class="action-btn" style="margin-top:5px; justify-content:center; border-color:var(--green); padding:8px;" onclick="commitDonate()">确认捐赠</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="item-card">
-                    <div><div class="item-name">💧 购买净水</div><div class="item-price">基地资金 $500</div><div class="item-desc">净水 +5</div></div>
-                    <button class="buy-btn" onclick="buyBaseItem('water')">购买</button>
+
+                <h3>🛒 采购项目</h3>
+                <div class="item-grid" style="margin-bottom:20px;">
+                    <div class="item-card">
+                        <div><div class="item-name">📦 购买物资包</div><div class="item-price">基地资金 $500</div><div class="item-desc">物资 +5</div></div>
+                        <button class="buy-btn" onclick="buyBaseItem('supplies')">购买</button>
+                    </div>
+                    <div class="item-card">
+                        <div><div class="item-name">💧 购买净水</div><div class="item-price">基地资金 $500</div><div class="item-desc">净水 +5</div></div>
+                        <button class="buy-btn" onclick="buyBaseItem('water')">购买</button>
+                    </div>
                 </div>
+                <div id="base-shop-container" class="item-grid"></div>
             </div>
-            <div id="base-shop-container" class="item-grid"></div>
         </div>
         
     </div>
 
     <div class="bottom-nav" id="bottom-nav" style="display:none; grid-template-columns: repeat(3, 1fr);">
-        <div class="nav-item active" onclick="switchNav('character', this)">
+        <div class="nav-item active" id="nav-character" onclick="switchNav('character', this)">
             <div class="nav-icon">🩺</div>
             <div>人物</div>
         </div>
-        <div class="nav-item" onclick="switchNav('base', this)">
+        <div class="nav-item" id="nav-base" onclick="switchNav('base', this)">
             <div class="nav-icon">⛺</div>
             <div>基地</div>
         </div>
-        <div class="nav-item" onclick="switchNav('event', this)">
+        <div class="nav-item" id="nav-event" onclick="switchNav('event', this)">
             <div class="nav-icon">🚨</div>
             <div>季度事件</div>
         </div>
@@ -514,7 +538,7 @@
                             <li><strong>生命指征</strong> - 每季度自然衰减，降至0则死亡</li>
                             <li><strong>诊疗进度</strong> - 达到100%可治愈出院</li>
                         </ul>
-                        <p style="margin-top:10px;"><strong>操作：</strong>治疗(提升进度和生命指征)、抢救(生命指征≤30时可用)、出院</p>
+                        <p style="margin-top:10px;"><strong>操作：</strong>治疗(提升进度和生命指征)、抢救(生命指征≤30时可用)、查房(消耗物资/健康)、出院</p>
                     </details>
                     
                     <details style="margin-bottom:15px;">
@@ -527,7 +551,7 @@
                             <li>Lv.5 需要连胜 15 题</li>
                             <li>Lv.6 需要连胜 20 题</li>
                         </ul>
-                        <p style="margin-top:10px;">晋升需在<strong>秋季</strong>申请，消耗<strong>40点好感度</strong>，冬季公布结果。</p>
+                        <p style="margin-top:10px;">晋升需消耗<strong>40点好感度</strong>，符合连胜要求即可随时申请。</p>
                     </details>
                     
                     <details style="margin-bottom:15px;">
@@ -595,6 +619,40 @@
     </div>
 </div>
 
+<div id="dev-modal" class="custom-modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header" style="background: #333; color: #0f0; font-family: monospace;">> DEVELOPER_MODE</div>
+        <div class="modal-body" style="text-align: left; font-family: monospace; font-size: 0.9rem;">
+            <div style="margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                <h4 style="margin: 0 0 10px 0; color: #0f0;">👤 人物属性</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>医学: <input type="number" id="dev-med" onchange="devUpdate('player', 'med', this.value)"></div>
+                    <div>行政: <input type="number" id="dev-admin" onchange="devUpdate('player', 'admin', this.value)"></div>
+                    <div>社交: <input type="number" id="dev-soc" onchange="devUpdate('player', 'soc', this.value)"></div>
+                    <div>好感: <input type="number" id="dev-favor" onchange="devUpdate('player', 'favor', this.value)"></div>
+                    <div>存款: <input type="number" id="dev-cash" onchange="devUpdate('player', 'cash', this.value)"></div>
+                    <div>健康: <input type="number" id="dev-health" onchange="devUpdate('player', 'health', this.value)"></div>
+                    <div>精力: <input type="number" id="dev-energy" onchange="devUpdate('player', 'energy', this.value)"></div>
+                    <div>职级(0-5): <input type="number" id="dev-rank" onchange="devUpdate('player', 'rankIndex', this.value)"></div>
+                </div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <h4 style="margin: 0 0 10px 0; color: #0f0;">⛺ 基地属性</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>资金: <input type="number" id="dev-funds" onchange="devUpdate('camp', 'funds', this.value)"></div>
+                    <div>难民: <input type="number" id="dev-refugees" onchange="devUpdate('camp', 'refugees', this.value)"></div>
+                    <div>紧张: <input type="number" id="dev-tension" onchange="devUpdate('camp', 'tension', this.value)"></div>
+                    <div>物资: <input type="number" id="dev-supplies" onchange="devUpdate('camp', 'supplies', this.value)"></div>
+                    <div>净水: <input type="number" id="dev-water" onchange="devUpdate('camp', 'water', this.value)"></div>
+                    <div>等级(0-3): <input type="number" id="dev-base-lv" onchange="devUpdate('camp', 'baseLevelIdx', this.value)"></div>
+                    <div>病房(0-3): <input type="number" id="dev-ward-lv" onchange="devUpdate('camp', 'wardLevel', this.value)"></div>
+                </div>
+            </div>
+            <button class="modal-btn" style="background: #333; color: #0f0; border: 1px solid #0f0;" onclick="$('dev-modal').style.display='none'">> EXIT_DEBUG</button>
+        </div>
+    </div>
+</div>
+
 <script>
     // --- 开发者配置 ---
     const DEVELOPER_API_KEY = "sk-87bf24fe26594fc1a85582e09cfad8c0"; // 开发者可在此填入默认KEY
@@ -608,7 +666,7 @@
 
     // 数据列表
     const CHAR_NAMES = ["Alex", "Dr. Sarah", "Jean", "Dr. Ahmed", "Maria", "David", "Liang", "Dr. Chen"];
-    const CHAR_DEPTS = ["骨科", "感染科", "儿科", "妇产科", "急诊科", "内科", "眼科"];
+    const CHAR_DEPTS = ["全科", "内科", "外科", "传染科", "儿科", "妇产科", "急诊科"];
     const CHAR_LOCATIONS = [
         "南苏丹 - 本提乌", "巴西 - 阿维斯塔", "阿富汗 - 昆都士", "也门 - 摩卡", 
         "海地 - 太阳城", "刚果金 - 北基伍", "中非共和国 - 班吉", "叙利亚 - 伊德利卜",
@@ -642,17 +700,19 @@
     const RANK_REQ_STREAK = [0, 3, 5, 10, 15, 20]; // 对应 1->2, 2->3 等
 
     const BASE_LEVELS = [
-        { name: "基础医疗点", cap: 150, cost: 0, wardCap: 5 },
-        { name: "移动医疗队", cap: 200, cost: 10000, wardCap: 7 },
-        { name: "野战医院", cap: 250, cost: 20000, wardCap: 9 },
-        { name: "专科中心", cap: 500, cost: 50000, wardCap: 12 }
+        { name: "基础医疗点", cap: 150, cost: 0 },
+        { name: "移动医疗队", cap: 200, cost: 10000 },
+        { name: "野战医院", cap: 250, cost: 20000 },
+        { name: "专科中心", cap: 500, cost: 50000 }
     ];
+
+    const WARD_CAPS = [5, 7, 10, 12];
 
     const SHOP_ITEMS = [
         { id: 'snack', name: '🍫 零食', price: 50, desc: '增加 3点 精力', type: 'cons', effect: { energy: 3 } },
         { id: 'medkit', name: '🩹 急救包', price: 50, desc: '增加 3点 健康', type: 'cons', effect: { health: 3 } },
-        { id: 'coffee', name: '☕ 现磨咖啡', price: 100, desc: '增加 5点 精力', type: 'cons', effect: { energy: 5 } },    
-        { id: 'epi', name: '💉 肾上腺素针', price: 100, desc: '增加 5点 健康', type: 'cons', effect: { health: 5 } },
+        { id: 'coffee', name: '☕ 现磨咖啡', price: 100, desc: '增加 8点 精力', type: 'cons', effect: { energy: 8 } },    
+        { id: 'epi', name: '💉 肾上腺素针', price: 100, desc: '增加 8点 健康', type: 'cons', effect: { health: 8 } },
         { id: 'suit', name: '👔 正装', price: 400, desc: '永久增加 5点 社交', type: 'perm', effect: { soc: 5 } },
 		{ id: 'book', name: '📚 管理学培训班', price: 600, desc: '永久增加 5点 行政', type: 'perm', effect: { admin: 5 } },
 		{ id: 'scope', name: '🩺 特级听诊器', price: 800, desc: '永久增加 5点 医学', type: 'perm', effect: { med: 5 } },
@@ -662,16 +722,17 @@
         { id: 'device', name: '🔬 实验设备', price: 5000, desc: '永久增加 15点 医学', type: 'perm', effect: { med: 15 } },
         { id: 'suv', name: '🚙 越野车', price: 10000, desc: '搬运物资不再消耗健康', type: 'perm', effect: {} },
         // 基地升级
-        { id: 'base_lv2', name: '🏗️ 扩建:移动医疗队', price: 10000, desc: '难民上限200, 更多床位', type: 'base', level: 1 },
-        { id: 'base_lv3', name: '🏥 扩建:野战医院', price: 20000, desc: '难民上限250, 更多床位', type: 'base', level: 2 },
-        { id: 'base_lv4', name: '🏙️ 扩建:专科中心', price: 50000, desc: '难民上限500, 更多床位', type: 'base', level: 3 }
+        { id: 'base_lv2', name: '🏗️ 扩建:移动医疗队', price: 10000, desc: '难民上限200', type: 'base', level: 1 },
+        { id: 'base_lv3', name: '🏥 扩建:野战医院', price: 20000, desc: '难民上限250', type: 'base', level: 2 },
+        { id: 'base_lv4', name: '🏙️ 扩建:专科中心', price: 50000, desc: '难民上限500', type: 'base', level: 3 },
+        { id: 'ward_upgrade', name: '🏥 病房升级', price: 5000, desc: '扩大床位容量', type: 'base_ward' }
     ];
 
     const CONFIG = { ranks: RANKS };
     
     // 姓名库
     const LAST_NAMES = ["赵", "钱", "孙", "李", "周", "吴", "郑", "王", "陈", "齐", "张", "许", "曹", "朱", "刘", "罗", "关", "何", "钟", "池", "林", "霍", "谢", "解", "田", "孟", "孔", "秦", "魏", "任", "杨", "黄", "苏", "冯", "楚", "隗", "贺", "仇", "戴", "龚", "薛", "史", "贾"];
-    const FIRST_NAMES = ["平生", "丘壑", "平", "风", "泊", "磊", "涛", "浩宇", "梓涵", "伟", "芳菲", "静", "晨欣", "子豪", "志明", "一鸣", "于飞", "家鑫", "湛", "泽", "宇辰", "怀梦", "一诺", "雨霖", "睦", "祥", "乐天", "素世", "幽璃", "浩然", "含英", "墨瀚", "宝宝", "秋染", "舜尧", "君玉", "由之", "信礼", "晓光", "松鹤", "澡雪", "沐秋", "春夏", "峰博", "子辰", "仰止", "明阳", "铭华", "致知", "行久", "爱音", "立希", "海洋", "雪", "嘉明"];
+    const FIRST_NAMES = ["平生", "无卯","丘壑", "平", "风", "泊", "磊", "涛", "浩宇", "梓涵", "伟", "芳菲", "静", "晨欣", "子豪", "志明", "一鸣", "于飞", "家鑫", "湛", "泽", "宇辰", "怀梦", "一诺", "雨霖", "睦", "祥", "乐天", "素世", "幽璃", "浩然", "含英", "墨瀚", "宝宝", "秋染", "舜尧", "君玉", "由之", "信礼", "晓光", "松鹤", "澡雪", "沐秋", "春夏", "峰博", "子辰", "仰止", "明阳", "铭华", "致知", "行久", "爱音", "立希", "海洋", "雪", "嘉明"];
     
     const ACHIEVEMENTS_DEF = [
         { id: 'cure10', name: '妙手回春', desc: '成功治疗10人', target: 10, key: 'cured' },
@@ -717,6 +778,38 @@
             chance: 0.01, // 1%
             condition: () => player.stats.currentLocQuarters >= 20 && player.rankIndex < 3, // 5年(20季度)且职级<4
             effect: 'homesick' // 特殊选择
+        },
+        {
+            id: 'international_visit',
+            name: '国际慰问',
+            desc: '一支来自欧洲的医疗志愿者代表团不远万里来到基地，他们带来了国际社会的关怀与支持。代表团成员们与医护人员亲切交流，分享医疗经验，还带来了急需的医疗物资和慰问品。他们的到来让整个基地都感受到了来自世界的温暖。',
+            chance: 0.05, // 5%
+            condition: () => true,
+            effect: 'international_visit' // 国际慰问
+        },
+        {
+            id: 'winter_festival',
+            name: '联欢晚会',
+            desc: '新年就要到了，基地里面难民和医护想要一同举行一场联欢晚会，你的选择：',
+            chance: 0.10, // 10%
+            condition: () => (currentQuarter - 1) % 4 === 3, // 冬天（第4季度）
+            effect: 'winter_festival' // 联欢晚会
+        },
+        {
+            id: 'special_patient',
+            name: '特殊病人',
+            desc: '一位衣衫褴褛、神色焦急的家属在凌晨敲开了基地的大门，哀求你将担架上奄奄一息的病人收下，他保证日后一定会回报你们。你决定：',
+            chance: 0.05, // 5%
+            condition: () => patients.length < WARD_CAPS[camp.wardLevel], // 病房未满
+            effect: 'special_patient' // 特殊病人
+        },
+        {
+            id: 'patient_reward',
+            name: '救人的回报',
+            desc: '几个月前你收治的那位特殊病人的家属兑现了承诺，他们带着感激和物资回到了基地。',
+            chance: 1.0, // 100%（由特殊病人触发）
+            condition: () => false, // 不由随机触发，由延迟事件触发
+            effect: 'patient_reward' // 救人的回报
         }
     ];
 
@@ -727,7 +820,7 @@
         stats: { cured: 0, deaths: 0, discharged: 0, totalEmbezzled: 0, currentLocQuarters: 0, visitedLocs: [] },
         achievements: {}
     };
-    let camp = { refugees: 100, supplies: 60, water: 60, tension: 30, funds: 10000, baseLevelIdx: 0 }; 
+    let camp = { refugees: 100, supplies: 60, water: 60, tension: 30, funds: 10000, baseLevelIdx: 0, wardLevel: 0 }; 
     let currentQuarter = 1; 
     let quartersSinceRank6 = 0;
     let dangerLevel = 5; 
@@ -745,6 +838,7 @@
     let examStreak = 0;
     let maxExamStreak = 0;
     let hasTakenExam = false; // 本季度是否考过
+    let pendingSpecialPatientReward = 0; // 延迟触发的"救人的回报"事件季度数
     
     // 尝试加载test.js中的testData变量作为题库
     function loadtestDataQuestions() {
@@ -825,7 +919,7 @@
         player.gender = Math.random() > 0.5 ? "男" : "女";
         if($('select-gender')) $('select-gender').value = player.gender;
         
-        const depts = ["内科", "外科", "传染科", "儿科", "妇产科", "骨科", "急诊科"];
+        const depts = ["全科", "内科", "外科", "传染科", "儿科", "妇产科", "急诊科"];
         player.dept = depts[randInt(0, depts.length-1)];
         if($('select-dept')) $('select-dept').value = player.dept;
         
@@ -860,6 +954,7 @@
             isVictoryPending, quartersSinceRank6, bioCache,
             patients, admittedCount, hasRounded,
             examQuestions, examStreak, maxExamStreak, hasTakenExam,
+            pendingSpecialPatientReward,
             saveDate: new Date().toLocaleString()
         };
         const key = type === 'auto' ? SAVE_KEY_AUTO : SAVE_KEY_MANUAL;
@@ -893,6 +988,7 @@
             const state = JSON.parse(data);
             player = state.player;
             camp = state.camp;
+            if(camp.wardLevel === undefined) camp.wardLevel = 0; // 兼容旧存档
             currentQuarter = state.currentQuarter;
             dangerLevel = state.dangerLevel;
             isEventResolved = state.isEventResolved;
@@ -917,6 +1013,7 @@
             examStreak = state.examStreak || 0;
             maxExamStreak = state.maxExamStreak || 0;
             hasTakenExam = state.hasTakenExam || false;
+            pendingSpecialPatientReward = state.pendingSpecialPatientReward || 0;
             
             $('load-modal').style.display = 'none';
             if($('setup-screen').classList.contains('active')) {
@@ -953,6 +1050,43 @@
         });
     }
     
+    // --- 开发者模式逻辑 (秘密) ---
+    let devPressTimer = null;
+    function startDevPress() {
+        devPressTimer = setTimeout(() => {
+            openDevModal();
+        }, 10000);
+    }
+    function endDevPress() {
+        if(devPressTimer) clearTimeout(devPressTimer);
+    }
+    function openDevModal() {
+        $('dev-modal').style.display = 'flex';
+        // 填充当前数值
+        $('dev-med').value = player.med;
+        $('dev-admin').value = player.admin;
+        $('dev-soc').value = player.soc;
+        $('dev-favor').value = player.favor;
+        $('dev-cash').value = player.cash;
+        $('dev-health').value = player.health;
+        $('dev-energy').value = player.energy;
+        $('dev-rank').value = player.rankIndex;
+        $('dev-funds').value = camp.funds;
+        $('dev-refugees').value = camp.refugees;
+        $('dev-tension').value = camp.tension;
+        $('dev-supplies').value = camp.supplies;
+        $('dev-water').value = camp.water;
+        $('dev-base-lv').value = camp.baseLevelIdx;
+        $('dev-ward-lv').value = camp.wardLevel;
+    }
+    function devUpdate(target, key, val) {
+        val = parseInt(val);
+        if(target === 'player') player[key] = val;
+        else camp[key] = val;
+        updateUI();
+        saveGame('auto');
+    }
+
     function tryStartNewGame() {
         if($('continue-btn').style.display !== 'none') {
             showConfirm("新游戏", "开始新游戏将覆盖存档，确定吗？", (res) => {
@@ -970,7 +1104,7 @@
         currentQuarter = 1;
         isEventResolved = false;
         isVictoryPending = false;
-        camp = { refugees: 100, supplies: 60, water: 60, tension: 30, funds: 10000, baseLevelIdx: 0 };
+        camp = { refugees: 100, supplies: 60, water: 60, tension: 30, funds: 10000, baseLevelIdx: 0, wardLevel: 0 };
         player.rankIndex = 0;
         player.favor = 10;
         player.cash = 300;
@@ -1001,6 +1135,7 @@
         examStreak = 0;
         maxExamStreak = 0;
         hasTakenExam = false;
+        pendingSpecialPatientReward = 0;
         
         // 初始化本季行动限制
         player.quarterlyActions = { running: 0, sleep: 0 };
@@ -1034,13 +1169,24 @@
     }
 
     function switchCharSubTab(tabId, btn) {
-        document.querySelectorAll('.char-sub-tab').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.sub-tab-nav .nav-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('#tab-character .char-sub-tab').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('#tab-character .sub-tab-nav .nav-item').forEach(el => el.classList.remove('active'));
         
         $('char-' + tabId).style.display = 'block';
         if(btn) btn.classList.add('active');
         
         if(tabId === 'supply' || tabId === 'workstation') renderShop();
+        updateUI();
+    }
+
+    function switchBaseSubTab(tabId, btn) {
+        document.querySelectorAll('#tab-base .base-sub-tab').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('#tab-base .sub-tab-nav .nav-item').forEach(el => el.classList.remove('active'));
+        
+        $('base-' + tabId).style.display = 'block';
+        if(btn) btn.classList.add('active');
+        
+        if(tabId === 'procure') renderShop();
         updateUI();
     }
 
@@ -1178,19 +1324,23 @@
                 if(item.level > camp.baseLevelIdx + 1) return;
             }
 
+            if(item.id === 'ward_upgrade') {
+                if(camp.wardLevel >= 3) return; // 已达Lv.4
+            }
+
             const el = document.createElement('div');
             el.className = 'item-card';
-            const priceLabel = item.type === 'base' ? '基地资金' : '个人存款';
+            const priceLabel = (item.type === 'base' || item.type === 'base_ward') ? '基地资金' : '个人存款';
             el.innerHTML = `
                 <div>
-                    <div class="item-name">${item.name}</div>
+                    <div class="item-name">${item.name}${item.id === 'ward_upgrade' ? ' (Lv.' + (camp.wardLevel + 1) + ' -> ' + (camp.wardLevel + 2) + ')' : ''}</div>
                     <div class="item-price">$${item.price} <span style="font-size:0.7rem; font-weight:normal; color:#888;">(${priceLabel})</span></div>
                     <div class="item-desc">${item.desc}</div>
                 </div>
                 <button class="buy-btn" id="btn-buy-${item.id}" onclick="buyItem('${item.id}')">购买</button>
             `;
             
-            if(item.type === 'base') baseContainer.appendChild(el);
+            if(item.type === 'base' || item.type === 'base_ward') baseContainer.appendChild(el);
             else personalContainer.appendChild(el);
         });
     }
@@ -1209,6 +1359,13 @@
             camp.funds -= item.price;
             camp.baseLevelIdx = item.level;
             showMessage("基地升级", `${item.name} 建设完成！容量提升。`);
+        } else if (item.type === 'base_ward') {
+            if (camp.wardLevel >= 3) return showMessage("提示", "病房已达最高等级！");
+            if (camp.funds < item.price) return showMessage("提示", "基地资金不足！");
+            camp.funds -= item.price;
+            camp.wardLevel++;
+            showMessage("病房升级", `病房升级到 Lv.${camp.wardLevel + 1}，床位扩大到 ${WARD_CAPS[camp.wardLevel]}。`);
+            renderShop(); // 更新商店显示
         } else {
             if (player.cash < item.price) return showMessage("提示", "个人存款不足！");
             player.cash -= item.price;
@@ -1374,8 +1531,7 @@
         if(camp.supplies < 5) return showMessage("物资不足", "需要5物资。");
         if(player.health < 5) return showMessage("体力不足", "太累了。");
 
-        camp.supplies -= 5;
-        player.health -= 5;
+        applyChanges({ supplies: -5, health: -5 }, "开始查房");
         hasRounded = true;
 
         let log = "";
@@ -1395,14 +1551,14 @@
         if(p.isDead) return showMessage("提示", "该病人已死亡。");
         if(!p.treatCount) p.treatCount = 0;
         if(p.treatCount >= 3) return showMessage("提示", "该病人本季度已达治疗上限(3次)");
+        if(player.energy < 2) return showMessage("提示", "精力不足，无法进行治疗。");
         
-        player.energy -= 2;
+        applyChanges({ energy: -2 });
         p.treatCount++;
         
         // Formula: floor(10% Med) + rand(10-20) - sev*3
         let gain = Math.floor(player.med * 0.1) + randInt(10, 20) - (p.sev * 3);
-        // Buffs? Assuming items might add buffs later, strictly logic now:
-        if(player.items.includes('device')) gain += 5; // Example buff
+        if(player.items.includes('device')) gain += 5;
         
         if(gain < 1) gain = 1;
         p.prog = Math.min(100, p.prog + gain);
@@ -1422,7 +1578,7 @@
         if(p.vital > 30) return showMessage("提示", "病人生命指征稳定，无需抢救。");
         if(camp.supplies < 5) return showMessage("物资不足", "抢救需要消耗5点物资。");
         
-        camp.supplies -= 5;
+        applyChanges({ supplies: -5 }, "紧急抢救");
         p.vital = Math.min(100, p.vital + 10);
         
         showMessage("抢救成功", `病人生命指征提升至 ${p.vital}。`);
@@ -1435,7 +1591,7 @@
     function buryPatient(idx) {
         if(camp.funds < 100) return showMessage("资金不足", "埋葬需要消耗 $100 基地资金。");
         
-        camp.funds -= 100;
+        applyChanges({ funds: -100 }, "安葬病人");
         patients.splice(idx, 1);
         
         showMessage("已安葬", "病人已安息。愿逝者安宁。");
@@ -1602,6 +1758,11 @@
         $('val-funds').innerText = '$' + camp.funds;
         $('val-base-lvl').innerText = BASE_LEVELS[camp.baseLevelIdx].name;
         $('val-base-lvl-num').innerText = camp.baseLevelIdx + 1;
+
+        // 动态图片更新
+        if($('img-base')) $('img-base').src = `image/base${camp.baseLevelIdx + 1}.png`;
+        if($('img-ward')) $('img-ward').src = `image/ward${camp.wardLevel + 1}.png`;
+        if($('img-supply')) $('img-supply').src = `image/supply${camp.baseLevelIdx + 1}.png`;
         
         // 更新个人属性显示 (工作站和补给站共享)
         ['work', 'supply'].forEach(suffix => {
@@ -1611,6 +1772,13 @@
             if($(`val-energy-${suffix}`)) $(`val-energy-${suffix}`).innerText = player.energy;
             if($(`bar-energy-${suffix}`)) $(`bar-energy-${suffix}`).style.width = player.energy + '%';
         });
+
+        // 更新基地采购界面数值
+        if($('val-funds-procure')) $('val-funds-procure').innerText = '$' + camp.funds;
+        if($('val-supplies-procure')) $('val-supplies-procure').innerText = camp.supplies + '%';
+        if($('bar-supplies-procure')) $('bar-supplies-procure').style.width = camp.supplies + '%';
+        if($('val-water-procure')) $('val-water-procure').innerText = camp.water + '%';
+        if($('bar-water-procure')) $('bar-water-procure').style.width = camp.water + '%';
 
         // 档案界面
         $('char-name-display').innerText = player.name;
@@ -1638,7 +1806,7 @@
         $('val-salary-promo').innerText = `$${RANK_SALARIES[player.rankIndex]}`;
 
         // Ward UI
-        const wardCap = BASE_LEVELS[camp.baseLevelIdx].wardCap;
+        const wardCap = WARD_CAPS[camp.wardLevel];
         $('ward-count').innerText = patients.length;
         $('ward-cap').innerText = wardCap;
         $('ward-limit-msg').innerText = `本季收治: ${admittedCount}/3`;
@@ -1942,8 +2110,9 @@
         if(player.energy < 3) return showMessage("状态不佳", "你精力不足，无法集中注意力。");
         
         let gain = randInt(1, 5);
-        player[type] = Math.min(100, player[type] + gain);
-        applyChanges({ energy: -3 }); 
+        let changes = { energy: -3 };
+        changes[type] = gain;
+        applyChanges(changes); 
 
         let typeName = type==='med'?'医学':(type==='admin'?'行政':'社交');
         let listHtml = `<li class="change-item"><span class="change-name">${typeName}提升</span> <span class="change-val val-up">+${gain}</span></li>` +
@@ -1954,9 +2123,9 @@
 
     function interactBoss(type) {
         if (type === 'network') {
-            if (player.energy < 20) return showMessage("状态不佳", "精力不足，不适合社交。");
+            if (player.health < 10) return showMessage("状态不佳", "健康值不足，无法进行高强度社交。");
             let gain = randInt(5, 9) + Math.floor(player.soc * 0.1);
-            applyChanges({ favor: gain, energy: -20 }, "联络感情");
+            applyChanges({ favor: gain, health: -10 }, "联络感情");
         } else if (type === 'fund') {
             if (player.favor < 30) return showMessage("请求被拒", "上级对你的信任不足(需30好感)。");
             let success = (Math.random() * 100) < player.favor;
@@ -1967,13 +2136,15 @@
                 applyChanges({ favor: -5 }, "请求资金(被拒)");
                 showMessage("申请驳回", "上级认为目前不需要额外拨款。");
             }
+        } else if (type === 'bribe') {
+            if (player.cash < 500) return showMessage("资金不足", "贿赂需要 $500 个人存款。");
+            applyChanges({ cash: -500, favor: 15, suspicion: 10 }, "私下贿赂");
         }
         saveGame('auto');
     }
 
     function applyForPromotion() {
-        const season = ["春", "夏", "秋", "冬"][(currentQuarter-1)%4];
-        if (season !== "秋") return showMessage("未开放", "晋升申请仅在秋季开放。");
+        if (player.rankIndex >= 5) return showMessage("顶级", "你已达到最高职级。");
         
         const reqStreak = RANK_REQ_STREAK[player.rankIndex + 1] || 0;
         if (maxExamStreak < reqStreak) {
@@ -1981,12 +2152,13 @@
         }
         if (player.favor < 40) return showMessage("好感不足", "申请晋升需要消耗40点上级好感度。");
 
-        player.appliedPromo = true;
-        applyChanges({ favor: -40 }, "提交晋升申请");
-        player.lastPromoQuarter = currentQuarter; 
+        player.rankIndex++;
+        applyChanges({ favor: -40 }, "晋升成功");
+        addAchievement(`第${Math.ceil(currentQuarter/4)}年: 晋升为 ${RANKS[player.rankIndex]}`);
+        showMessage("职级晋升", `恭喜！你的晋升申请已获批准。现任职级：${RANKS[player.rankIndex]}。`);
+        
         updateUI();
         saveGame('auto');
-        showMessage("已提交", "已提交晋升申请，总部将在冬季结束时进行考核。");
     }
 
     function processPromotion() {
@@ -2077,8 +2249,8 @@
     }
 
     async function generateBio() {
-        const prompt = `你是一个小说家。背景：${player.location} 的无国界医生(MSF)营地。人物：${player.name}，${player.gender}，科室：【${player.dept}】。参考数值：医学${player.med}，行政${player.admin}，社交${player.soc}。\n请生成一段约150字的人物介绍，禁止出现具体数值，使用生活化阶梯描述。`;
-        if($('use-mock').checked) { await wait(1000); return "（模拟模式）这里是前线。作为一名外科医生，他冷静而果敢，手术刀是他在地狱中唯一的信仰。"; }
+        const prompt = `你是一个小说家。背景：${player.location} 的无国界医生(MSF)营地。人物：${player.name}，${player.gender}，科室：【${player.dept}】。参考数值：医学${player.med}，行政${player.admin}，社交${player.soc}。\n请生成一段约150字的人物介绍，内容必须紧扣其【${player.dept}】的专业背景，禁止出现具体数值，使用生活化阶梯描述。`;
+        if($('use-mock').checked) { await wait(1000); return `（模拟模式）这里是前线。作为一名${player.dept}医生，他冷静而果敢，专业技能是他在地狱中唯一的信仰。`; }
         return await callDeepSeek(prompt, false);
     }
 
@@ -2138,8 +2310,8 @@
         const timeInfo = getSeasonInfo();
         const periodName = `第${timeInfo.year}年 ${timeInfo.season}`;
 
-        // 增加调任逻辑 (要求4)
-        if(player.stats.currentLocQuarters >= 12) {
+        // 增加调任逻辑 (第3年春开始开放)
+        if(player.stats.totalQuarters >= 8) {
             addTransferButton();
         }
         
@@ -2189,6 +2361,17 @@
             p.treatCount = 0;
         });
         if(deathCount > 0) report.push({ name: "病患死亡数", val: `-${deathCount}`, type: "down" });
+
+        // 检查延迟触发的"救人的回报"事件
+        if(pendingSpecialPatientReward > 0) {
+            pendingSpecialPatientReward--;
+            if(pendingSpecialPatientReward === 0) {
+                const rewardEvent = SPECIAL_EVENTS.find(e => e.id === 'patient_reward');
+                if(rewardEvent) {
+                    await triggerSpecialEvent(rewardEvent);
+                }
+            }
+        }
 
         // 触发特殊事件
         await checkSpecialEvents();
@@ -2329,6 +2512,44 @@
                 window.specialEventResolve = resolve;
             });
         }
+        else if(evt.effect === 'international_visit') {
+            // 国际慰问：直接生效
+            applyChanges({ tension: -10, supplies: 10, water: 10 }, "国际慰问");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n基地紧张度 -10，物资 +10，净水 +10。`);
+            updateUI();
+        }
+        else if(evt.effect === 'winter_festival') {
+            // 联欢晚会：显示选择弹窗
+            return new Promise(resolve => {
+                $('special-event-modal').style.display = 'flex';
+                $('special-event-title').innerText = `⚡ ${evt.name}`;
+                $('special-event-desc').innerText = evt.desc;
+                $('special-event-choices').innerHTML = `
+                    <button class="modal-btn" style="background:var(--green); margin-bottom:10px;" onclick="handleWinterFestivalChoice('agree')">✅ 同意</button>
+                    <button class="modal-btn secondary" onclick="handleWinterFestivalChoice('refuse')">❌ 拒绝</button>
+                `;
+                window.specialEventResolve = resolve;
+            });
+        }
+        else if(evt.effect === 'special_patient') {
+            // 特殊病人：显示选择弹窗
+            return new Promise(resolve => {
+                $('special-event-modal').style.display = 'flex';
+                $('special-event-title').innerText = `⚡ ${evt.name}`;
+                $('special-event-desc').innerText = evt.desc;
+                $('special-event-choices').innerHTML = `
+                    <button class="modal-btn" style="background:var(--blue); margin-bottom:10px;" onclick="handleSpecialPatientChoice('accept')">🏥 收下</button>
+                    <button class="modal-btn secondary" onclick="handleSpecialPatientChoice('refuse')">❌ 拒绝</button>
+                `;
+                window.specialEventResolve = resolve;
+            });
+        }
+        else if(evt.effect === 'patient_reward') {
+            // 救人的回报：直接生效
+            applyChanges({ cash: 300, supplies: 10 }, "救人的回报");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n个人存款 +$300，基地物资 +10。`);
+            updateUI();
+        }
     }
     
     function handleHomesickChoice(choice) {
@@ -2346,6 +2567,58 @@
             updateUI();
         }
         
+        if(window.specialEventResolve) {
+            window.specialEventResolve();
+            window.specialEventResolve = null;
+        }
+    }
+
+    function handleWinterFestivalChoice(choice) {
+        $('special-event-modal').style.display = 'none';
+        
+        if(choice === 'agree') {
+            applyChanges({ supplies: -10, tension: -10, energy: 10 }, "联欢晚会");
+            showMessage("联欢晚会", "不分国籍和肤色，人们在篝火下其乐融融，你知道希望是最珍贵的东西。\n\n物资 -10，紧张度 -10，精力 +10。");
+        } else {
+            showMessage("联欢晚会", "人们失望地度过了又一个艰难的冬天。");
+        }
+        
+        updateUI();
+        if(window.specialEventResolve) {
+            window.specialEventResolve();
+            window.specialEventResolve = null;
+        }
+    }
+
+    function handleSpecialPatientChoice(choice) {
+        $('special-event-modal').style.display = 'none';
+        
+        if(choice === 'accept') {
+            // 添加一位重症病人
+            const wardCap = WARD_CAPS[camp.wardLevel];
+            if(patients.length >= wardCap) {
+                showMessage("提示", "病房已满，无法收治。");
+            } else {
+                patients.push({
+                    name: "特殊病人",
+                    age: randInt(0, 75),
+                    sev: 2, // 重症
+                    prog: 0,
+                    vital: 20, // 重症初始生命指征
+                    treatCount: 0,
+                    isDead: false
+                });
+                // 设置3个季度后触发"救人的回报"
+                pendingSpecialPatientReward = 3;
+                showMessage("特殊病人", "家属对你叠声感谢。你收治了这位重症病人。");
+                renderPatients();
+            }
+        } else {
+            applyChanges({ tension: 5 }, "拒绝收治");
+            showMessage("特殊病人", "家属带着病人失望地离去了。\n\n紧张度 +5。");
+        }
+        
+        updateUI();
         if(window.specialEventResolve) {
             window.specialEventResolve();
             window.specialEventResolve = null;
@@ -2428,7 +2701,7 @@
         };
     }
 
-    function applyChanges(effects, reason = "属性变化") {
+    function applyChanges(effects, reason = null) {
         let logParts = [];
         const map = { health: "健康", energy: "精力", supplies: "物资", water: "净水", tension: "紧张度", refugees: "难民", funds: "基地资金", favor: "好感", med:"医学", admin:"行政", soc:"社交", cash:"个人存款", suspicion:"嫌疑" };
         
@@ -2454,7 +2727,7 @@
             logParts.push(`${map[key]||key} ${val>0?'+':''}${displayVal}`);
         }
         
-        if (logParts.length > 0) {
+        if (logParts.length > 0 && reason) {
             showMessage(reason, logParts.join("，"));
         }
         updateUI();

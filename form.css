@@ -129,6 +129,10 @@
             cursor: pointer; color: #888; font-size: 0.7rem; transition: 0.2s; padding: 2px 0;
         }
         .nav-item.active { color: var(--primary); font-weight: bold; background: rgba(255,255,255,0.05); }
+        .char-nav-btn.active { color: #000 !important; }
+        body.night-mode .char-nav-btn.active { color: #fff !important; }
+        #nav-character.active { color: #000 !important; }
+        body.night-mode #nav-character.active { color: #fff !important; }
         .nav-icon { font-size: 1.2rem; margin-bottom: 2px; }
 
         /* 内容区域 */
