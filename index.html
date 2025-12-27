@@ -297,12 +297,12 @@
                 </div>
 
                 <h4 style="margin-top:20px;">基地行动 (消耗资源/精力)</h4>
-                <button class="action-btn" onclick="doAction('distribute_food')"><span>🥣 分发物资</span><span style="font-size:0.8em; color:#888;">物资-5, 紧张减少受社交加成</span></button>
-                <button class="action-btn" onclick="doAction('distribute_water')"><span>🚰 提供净水</span><span style="font-size:0.8em; color:#888;">水-5, 紧张减少受社交加成</span></button>
+                <button class="action-btn" onclick="doAction('distribute_food')"><span>🥣 分发物资</span><span style="font-size:0.8em; color:#888;">物资-5, 减少紧张度</span></button>
+                <button class="action-btn" onclick="doAction('distribute_water')"><span>🚰 提供净水</span><span style="font-size:0.8em; color:#888;">水-5, 减少紧张度</span></button>
                 <button class="action-btn" onclick="doAction('transport')"><span>🚙 接收空投物资</span><span style="font-size:0.8em; color:#888;">物资/水+10, 健康-5</span></button>
                 <button class="action-btn" onclick="doAction('pacify')"><span>🕊️ 安抚民众</span><span style="font-size:0.8em; color:#888;">紧张-5, 精力-10</span></button>
                 <button class="action-btn" onclick="doAction('rescue')"><span>🚑 前线救援</span><span style="font-size:0.8em; color:#888;">健康-10, 难民+10</span></button>
-                <button class="action-btn" onclick="doAction('big_spender')"><span>💸 大撒币行动</span><span style="font-size:0.8em; color:#888;">资金-1000, 紧张-8</span></button>
+                <button class="action-btn" onclick="doAction('big_spender')"><span>💸 大撒币行动</span><span style="font-size:0.8em; color:#888;">资金-1000, 紧张-108</span></button>
             </div>
 
             <div id="base-ward" class="base-sub-tab" style="display:none;">
@@ -584,6 +584,87 @@
     </div>
 </div>
 
+<div id="tutorial-modal" class="custom-modal">
+    <div class="modal-content" style="max-width:600px; max-height:90vh; overflow-y:auto;">
+        <div class="modal-header" style="background:var(--gold); color:#333;">📖 新手教程</div>
+        <div class="modal-body" style="text-align:left;">
+            <div style="font-size:0.9rem; line-height:1.8; color:#aaa;">
+                <details open style="margin-bottom:15px;">
+                    <summary style="font-weight:bold; color:var(--text); cursor:pointer; margin-bottom:10px;">🎮 游戏简介</summary>
+                    <p>你是一名无国界医生组织（MSF）的医疗志愿者，被派往战乱或灾难地区执行人道主义救援任务。你需要管理营地资源、救治病患、应对突发事件，并在这个过程中提升自己的能力和职级。</p>
+                </details>
+                
+                <details style="margin-bottom:15px;">
+                    <summary style="font-weight:bold; color:var(--text); cursor:pointer; margin-bottom:10px;">📊 核心数值</summary>
+                    <p><strong>个人属性：</strong></p>
+                    <ul style="margin-left:20px;">
+                        <li><strong>医学</strong> - 影响治疗病人的效果</li>
+                        <li><strong>行政</strong> - 降低基地运营成本</li>
+                        <li><strong>社交</strong> - 安抚难民更有效，减少紧张度</li>
+                        <li><strong>健康/精力</strong> - 执行行动的消耗</li>
+                    </ul>
+                    <p style="margin-top:10px;"><strong>营地属性：</strong></p>
+                    <ul style="margin-left:20px;">
+                        <li><strong>难民</strong> - 营地收容的难民数量</li>
+                        <li><strong>物资/净水</strong> - 维持营地运转的资源，每季度自然消耗</li>
+                        <li><strong>紧张度</strong> - 过高会导致游戏失败</li>
+                        <li><strong>基地资金</strong> - 用于运营和扩建基地</li>
+                    </ul>
+                </details>
+                
+                <details style="margin-bottom:15px;">
+                    <summary style="font-weight:bold; color:var(--text); cursor:pointer; margin-bottom:10px;">🏥 病房系统</summary>
+                    <p>你可以收治病人并进行治疗。每位病人有：</p>
+                    <ul style="margin-left:20px;">
+                        <li><strong>危急度</strong> - 分为轻症/中症/重症</li>
+                        <li><strong>生命指征</strong> - 每季度自然衰减，降至0则死亡</li>
+                        <li><strong>诊疗进度</strong> - 达到100%可治愈出院</li>
+                    </ul>
+                    <p style="margin-top:10px;"><strong>操作：</strong>治疗(提升进度和生命指征)、抢救(生命指征≤30时可用)、查房(消耗物资/健康)、出院</p>
+                </details>
+                
+                <details style="margin-bottom:15px;">
+                    <summary style="font-weight:bold; color:var(--text); cursor:pointer; margin-bottom:10px;">📈 晋升系统</summary>
+                    <p>通过参加考核获得连胜来晋升职级：</p>
+                    <ul style="margin-left:20px;">
+                        <li>Lv.2 需要连胜 3 题</li>
+                        <li>Lv.3 需要连胜 5 题</li>
+                        <li>Lv.4 需要连胜 10 题</li>
+                        <li>Lv.5 需要连胜 15 题</li>
+                        <li>Lv.6 需要连胜 20 题</li>
+                    </ul>
+                    <p style="margin-top:10px;">晋升需消耗<strong>40点好感度</strong>，符合连胜要求即可随时申请。</p>
+                </details>
+                
+                <details style="margin-bottom:15px;">
+                    <summary style="font-weight:bold; color:var(--text); cursor:pointer; margin-bottom:10px;">⚠️ 游戏结束条件</summary>
+                    <p><strong>失败条件：</strong></p>
+                    <ul style="margin-left:20px;">
+                        <li>营地紧张度达到100%</li>
+                        <li>基地资金耗尽</li>
+                        <li>个人存款为负且无法维持</li>
+                        <li>嫌疑度过高被调查定罪</li>
+                    </ul>
+                    <p style="margin-top:10px;"><strong>胜利条件：</strong>晋升至最高职级(Lv.6)并稳定维持3个季度以上。</p>
+                </details>
+                
+                <details style="margin-bottom:15px;">
+                    <summary style="font-weight:bold; color:var(--text); cursor:pointer; margin-bottom:10px;">💡 小贴士</summary>
+                    <ul style="margin-left:20px;">
+                        <li>物资和净水每季度会自然消耗，记得及时补充</li>
+                        <li>与上级保持良好关系，好感度是晋升的关键</li>
+                        <li>挪用公款会增加嫌疑度，风险自负</li>
+                        <li>重症病人生命指征衰减快，优先处理</li>
+                        <li>健康和精力每季度会自动恢复10点</li>
+                    </ul>
+                </details>
+            </div>
+            <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;">
+            <button class="modal-btn" style="width:100%;" onclick="closeTutorialModal()">开始游戏</button>
+        </div>
+    </div>
+</div>
+
 <div id="achievements-modal" class="custom-modal">
     <div class="modal-content" style="max-width:600px; max-height:90vh; overflow-y:auto;">
         <div class="modal-header" style="background:var(--panel); color:var(--text);">🏆 成就系统</div>
@@ -750,7 +831,9 @@
         { id: 'stealSmall', name: '窃钩者诛', desc: '挪用1万美金', target: 10000, key: 'totalEmbezzled' },
         { id: 'stealBig', name: '窃国者侯', desc: '挪用100万美金', target: 1000000, key: 'totalEmbezzled' },
         { id: 'surrender', name: '高抬贵手', desc: '被调查后上交存款', target: 1, key: 'hasSurrendered' },
-        { id: 'honest', name: '至公无私', desc: '胜利时未挪用过公款', target: 1, key: 'isHonest' }
+        { id: 'honest', name: '至公无私', desc: '胜利时未挪用过公款', target: 1, key: 'isHonest' },
+        { id: 'inheritor', name: '传承者', desc: '完成"岁月缝合的伤口"特殊事件', target: 1, key: 'hasYearsStitchedWound' },
+        { id: 'truth_keeper', name: '真理守望者', desc: '完成"第52号观察站"特殊事件', target: 1, key: 'hasObservationStation52' }
     ];
     
     // 特殊事件定义
@@ -810,6 +893,298 @@
             chance: 1.0, // 100%（由特殊病人触发）
             condition: () => false, // 不由随机触发，由延迟事件触发
             effect: 'patient_reward' // 救人的回报
+        },
+        {
+            id: 'visitors_from_afar',
+            name: '有朋自远方来',
+            desc: '基地来了一群语言不通的客人，你选择？',
+            chance: 0.05, // 5%
+            condition: () => true,
+            effect: 'visitors_from_afar' // 有朋自远方来
+        },
+        {
+            id: 'veteran_volunteer',
+            name: '老兵志愿者加入',
+            desc: '一位经验丰富的退休医生自愿加入你的团队。',
+            chance: 0.03, // 3%
+            condition: () => !player.stats.hasVeteranVolunteer,
+            effect: 'veteran_volunteer'
+        },
+        {
+            id: 'illegal_drug_scandal',
+            name: '非法药物实验丑闻',
+            desc: '营地被谣传在进行非法实验，总部要求你立即自查清白。',
+            chance: 0.04, // 4%
+            condition: () => true,
+            effect: 'illegal_drug_scandal'
+        },
+        {
+            id: 'international_journalists',
+            name: '国际记者团到访',
+            desc: '一群国际记者希望采访营地。你的言行将影响外界对项目的看法。',
+            chance: 0.05, // 5%
+            condition: () => true,
+            effect: 'international_journalists'
+        },
+        {
+            id: 'candlelight_mass',
+            name: '烛火下的弥撒',
+            desc: '停电的深夜，难民们在营地角落点起残烛。那一刻，苦难被歌声暂时抚平。',
+            chance: 0.06, // 6%
+            condition: () => camp.tension > 40,
+            effect: 'candlelight_mass'
+        },
+        {
+            id: 'yesterdays_phantom',
+            name: '昨日的幻影',
+            desc: '你在处理旧公文时发现了一张前任医生的照片，背面的文字记录了他未竟的理想。',
+            chance: 0.03, // 3%
+            condition: () => player.admin > 50 && !player.stats.hasYesterdaysPhantom,
+            effect: 'yesterdays_phantom'
+        },
+        {
+            id: 'crossing_redemption',
+            name: '越线的救赎',
+            desc: '一名受伤的敌方士兵被秘密弃置在营地门口。救他会招来报复，不救则背叛誓言。',
+            chance: 0.04, // 4%
+            condition: () => player.med > 70,
+            effect: 'crossing_redemption'
+        },
+        {
+            id: 'forgotten_orphan',
+            name: '被遗忘的孤儿',
+            desc: '战火熄灭后的废墟里，你带回了一个紧紧抱着手术剪的孩子，他拒绝和任何人说话。',
+            chance: 0.05, // 5%
+            condition: () => camp.refugees < BASE_LEVELS[camp.baseLevelIdx].cap,
+            effect: 'forgotten_orphan'
+        },
+        {
+            id: 'bloody_medal',
+            name: '染血的勋章',
+            desc: '本地官员试图授予你一枚"荣誉勋章"以换取你在医疗报告上的缄默。',
+            chance: 0.04, // 4%
+            condition: () => player.suspicion < 20,
+            effect: 'bloody_medal'
+        },
+        {
+            id: 'monsoon_gift',
+            name: '季候风的馈赠',
+            desc: '雨季超乎预期地带来了丰沛降水，干涸的井眼重新涌动，泥土气息在空气中弥漫。',
+            chance: 0.05, // 5%
+            condition: () => camp.water < 20,
+            effect: 'monsoon_gift'
+        },
+        {
+            id: 'silent_farewell',
+            name: '沉默的告别',
+            desc: '一位你长期照料的老病人在清晨悄然离世，他留下了一串亲手编织的草编幸运结。',
+            chance: 0.03, // 3%
+            condition: () => player.achievements.cure100 && !player.stats.hasSilentFarewell,
+            effect: 'silent_farewell'
+        },
+        {
+            id: 'last_cigarette',
+            name: '最后的一支烟',
+            desc: '在资源耗尽的边缘，你与副手在月光下分享最后一支烟，谈论着如果和平降临后的打算。',
+            chance: 0.04, // 4%
+            condition: () => camp.funds < 5000,
+            effect: 'last_cigarette'
+        },
+        {
+            id: 'wire_wedding',
+            name: '铁丝网外的婚礼',
+            desc: '在那道分割生死的生锈铁丝网两侧，一对新人交换了用绷带缠成的戒指。在MSF营地，生命力总是能从瓦砾中开出花来。',
+            chance: 0.05, // 5%
+            condition: () => camp.tension < 30,
+            effect: 'wire_wedding'
+        },
+        {
+            id: 'thousand_heartbeat',
+            name: '第1000次心跳',
+            desc: '这是本季度在这个简陋产房里诞生的第1000名婴儿。在硝烟散尽的清晨，啼哭声成了这片荒原上唯一的希望频率。',
+            chance: 0.04, // 4%
+            condition: () => admittedCount > 0,
+            effect: 'thousand_heartbeat'
+        },
+        {
+            id: 'ruins_echo',
+            name: '废墟上的回响',
+            desc: '手术室外的走廊里，一位母亲紧握着干枯的手，仿佛只要不松开，时间就能倒流。在这座被上帝遗忘的城市，空气中满是尘土与祈祷的味道。',
+            chance: 0.05, // 5%
+            condition: () => camp.tension > 50,
+            effect: 'ruins_echo'
+        },
+        {
+            id: 'buried_truth',
+            name: '被掩埋的真相',
+            desc: '一份被烧毁一半的实验室记录显示，当地水源污染并非天灾。真相像一枚哑弹，埋藏在权力的深层结构里，等待着敢于挖掘它的人。',
+            chance: 0.04, // 4%
+            condition: () => true,
+            effect: 'buried_truth'
+        },
+        {
+            id: 'horizon_dust',
+            name: '地平线的尘烟',
+            desc: '数千名难民正穿越红树林沼泽。他们没有国籍，没有护照，只有脚下那双磨平的凉鞋和对那个"红色标志"的盲目信任。',
+            chance: 0.05, // 5%
+            condition: () => camp.refugees < BASE_LEVELS[camp.baseLevelIdx].cap * 0.5,
+            effect: 'horizon_dust'
+        },
+        {
+            id: 'deadly_silence',
+            name: '致命的"静默期"',
+            desc: '当局宣布停火六小时，以运送必要的儿童疫苗。然而，这种静默比炮火更令人不安，没人知道狙击手的准星此刻正对着谁。',
+            chance: 0.05, // 5%
+            condition: () => dangerLevel > 15,
+            effect: 'deadly_silence'
+        },
+        {
+            id: 'years_stitched_wound',
+            name: '岁月缝合的伤口',
+            desc: '十年过去了。当年那个在你怀里死里逃生的少年今穿着白大褂回到了这里。生命在灰烬中完成了最壮丽的循环。',
+            chance: 0.03, // 3%
+            condition: () => (player.stats.totalQuarters || 0) > 24 && !player.stats.hasYearsStitchedWound,
+            effect: 'years_stitched_wound'
+        },
+        {
+            id: 'silent_game',
+            name: '无声的博弈',
+            desc: '谈判桌上的香烟已经燃尽，双方指挥官在地图上划出的"医疗安全区"，在现实中不过是几层摇摇欲坠的沙袋。',
+            chance: 0.04, // 4%
+            condition: () => dangerLevel > 15,
+            effect: 'silent_game'
+        },
+        {
+            id: 'monsoon_disease',
+            name: '季风带来的疫症',
+            desc: '随着暖湿气流越过山脊，那种熟悉的、带着泥土腥气的热症在难民营中悄然蔓延。这是一场自然与医学的原始竞赛。',
+            chance: 0.05, // 5%
+            condition: () => {
+                const seasonInfo = getSeasonInfo();
+                return seasonInfo.season === '春';
+            },
+            effect: 'monsoon_disease'
+        },
+        {
+            id: 'bed7_sketch',
+            name: '第7号床位的素描',
+            desc: '那个失去双腿的男孩在病床边画了一架纸飞机。他说，如果飞得够高，就能看到没有铁丝网遮挡的日落。',
+            chance: 0.04, // 4%
+            condition: () => {
+                // 本季治愈人数 > 0，检查本季度是否有治愈的病人
+                return (player.stats.quarterlyCured || 0) > 0 || patients.some(p => p.prog >= 100 && !p.isDead);
+            },
+            effect: 'bed7_sketch'
+        },
+        {
+            id: 'thousand_one_story',
+            name: '第一千零一个故事',
+            desc: '他坐在诊室门槛上，讲述着家乡那棵老橄榄树。每个难民都是一部活着的史诗，而我们只是在为这些史诗续命。',
+            chance: 0.05, // 5%
+            condition: () => player.soc > 50,
+            effect: 'thousand_one_story'
+        },
+        {
+            id: 'monsoon_judgment',
+            name: '季候风的判决',
+            desc: '暴雨将唯一的撤离通道变成了泥沼。这种来自大自然的绝对禁锢，让所有昂贵的越野车都成了困在泥淖里的废铁。',
+            chance: 0.04, // 4%
+            condition: () => {
+                const seasonInfo = getSeasonInfo();
+                return seasonInfo.season === '秋';
+            },
+            effect: 'monsoon_judgment'
+        },
+        {
+            id: 'underground_clinic',
+            name: '地下诊所的暗流',
+            desc: '在营地几公里外的地窖里，非法行医者正在兜售过期的生理盐水。贫穷与恐惧是滋生这种阴影最肥沃的土壤。',
+            chance: 0.05, // 5%
+            condition: () => camp.funds < 5000,
+            effect: 'underground_clinic'
+        },
+        {
+            id: 'silent_delivery',
+            name: '寂静的产房',
+            desc: '没有啼哭，只有助产士急促的喘息和母亲空洞的眼神。由于营养匮乏，这个月出生的第三个婴儿没能撑过第一个黎明。',
+            chance: 0.04, // 4%
+            condition: () => camp.refugees > 200,
+            effect: 'silent_delivery'
+        },
+        {
+            id: 'vanished_bloodbank',
+            name: '消失的血库',
+            desc: '由于冷链系统在高温下瘫痪，整整三个季度的库存血浆化为了无用的暗红色液体。在战区，电力有时比血液更珍贵。',
+            chance: 0.05, // 5%
+            condition: () => {
+                const seasonInfo = getSeasonInfo();
+                return seasonInfo.season === '夏' && camp.water < 30;
+            },
+            effect: 'vanished_bloodbank'
+        },
+        {
+            id: 'betrayed_coordinates',
+            name: '被出卖的坐标',
+            desc: '卫星定位显示营地处于安全区，但呼啸而来的集束炸弹证明，在这场多方角力的棋局中，人道主义坐标是可以被交易的。',
+            chance: 0.04, // 4%
+            condition: () => player.suspicion > 20,
+            effect: 'betrayed_coordinates'
+        },
+        {
+            id: 'ashes_peace',
+            name: '灰烬中的和平协议',
+            desc: '和平协议签署的消息传来时，营地正忙着处理最后一批烧伤员。纸面上的墨迹尚未干透，地平线上的硝烟却已开始散去。',
+            chance: 0.03, // 3%
+            condition: () => (player.stats.totalQuarters || 0) > 11,
+            effect: 'ashes_peace'
+        },
+        {
+            id: 'observation_station_52',
+            name: '第52号观察站',
+            desc: '你守着那台锈迹斑斑的显微镜，在显微镜下寻找疟原虫的踪迹。你常说，镜片里的微观世界，比外面的炮火更逻辑清晰。',
+            chance: 0.04, // 4%
+            condition: () => player.med > 70 && !player.stats.hasObservationStation52,
+            effect: 'observation_station_52'
+        },
+        {
+            id: 'wire_market',
+            name: '铁丝网下的市集',
+            desc: '在这里，半块发霉的黑面包能换到一个损坏的听诊器。当文明秩序坍塌，人类最原始的物物交换成了营地里唯一的商业脉搏。',
+            chance: 0.05, // 5%
+            condition: () => camp.funds < 3000,
+            effect: 'wire_market'
+        },
+        {
+            id: 'desert_mirage',
+            name: '沙漠里的"海市蜃楼"',
+            desc: '远处出现了一支驼队，他们带着传说中的抗生素而来。但当医生走近时，只看到漫天黄沙和一张印着虚假防伪标的旧报纸。',
+            chance: 0.04, // 4%
+            condition: () => camp.water < 30,
+            effect: 'desert_mirage'
+        },
+        {
+            id: 'borderless_funeral',
+            name: '无国界的葬礼',
+            desc: '来自三个国家的医生，为一个素不相识的当地孩子挖掘了坟墓。泥土的颜色在全世界都是一样的，无论你为何而战。',
+            chance: 0.05, // 5%
+            condition: () => true,
+            effect: 'borderless_funeral'
+        },
+        {
+            id: 'delayed_olive_branch',
+            name: '被延迟的"橄榄枝"',
+            desc: '停火协议的电文在传输中丢失了三个小时。这三个小时，足以让原本可以被缝合的生命，在战壕里流干最后一滴血。',
+            chance: 0.04, // 4%
+            condition: () => dangerLevel > 15,
+            effect: 'delayed_olive_branch'
+        },
+        {
+            id: 'dawn_silence',
+            name: '这里的黎明静悄悄',
+            desc: '当第一缕阳光穿透停尸房的破损屋顶，那些覆盖着白布的轮廓显得如此静谧。在战区，死亡不是终点，而是幸存者漫长余生的开端。',
+            chance: 0.05, // 5%
+            condition: () => (player.stats.deaths || 0) > 3,
+            effect: 'dawn_silence'
         }
     ];
 
@@ -818,7 +1193,8 @@
         name:"", gender:"", dept:"", med:0, admin:0, soc:0, health:60, energy:60, location: "",
         suspicion: 0, investigationCount: 0, rankIndex: 0, favor: 50, cash: 300, items: [],
         stats: { cured: 0, deaths: 0, discharged: 0, totalEmbezzled: 0, currentLocQuarters: 0, visitedLocs: [] },
-        achievements: {}
+        achievements: {},
+        eventCooldowns: {} // 记录事件冷却：{eventId: lastQuarter}
     };
     let camp = { refugees: 100, supplies: 60, water: 60, tension: 30, funds: 10000, baseLevelIdx: 0, wardLevel: 0 }; 
     let currentQuarter = 1; 
@@ -1183,6 +1559,10 @@
         $('settings-modal').style.display = 'none';
     }
 
+    function closeTutorialModal() {
+        $('tutorial-modal').style.display = 'none';
+    }
+
     function openAchievementsModal() {
         $('achievements-modal').style.display = 'flex';
         updateUI();
@@ -1298,6 +1678,11 @@
             player.cash += firstSalary;
             addAchievement("游戏开始 - 抵达前线");
             saveGame('auto');
+            
+            // 显示新手教程
+            setTimeout(() => {
+                $('tutorial-modal').style.display = 'flex';
+            }, 500);
         } else {
             // 读档恢复状态
             $('log-box').innerHTML = ""; 
@@ -1489,8 +1874,18 @@
         
         // Generate basic data
         const bedNum = findEmptyBed(maxCap);
-        const age = player.dept === "儿科" ? randInt(0, 18) : randInt(0, 75);
-        const gender = Math.random()>0.5?"男":"女";
+        let age, gender;
+        if(player.dept === "妇产科") {
+            // 妇产科病人全为女性和新生儿
+            gender = "女";
+            age = Math.random() > 0.3 ? randInt(18, 45) : 0; // 70%成年女性，30%新生儿(0岁)
+        } else if(player.dept === "儿科") {
+            age = randInt(0, 18);
+            gender = Math.random()>0.5?"男":"女";
+        } else {
+            age = randInt(0, 75);
+            gender = Math.random()>0.5?"男":"女";
+        }
         
         // 轻症50%概率、中症30%、重症10%
         const sevRoll = Math.random();
@@ -1631,6 +2026,7 @@
         if(p.prog >= 100) {
             // Success
             player.stats.cured++;
+            player.stats.quarterlyCured = (player.stats.quarterlyCured || 0) + 1; // 记录本季度治愈人数
             const reward = randInt(50, 150) + (p.sev * 50);
             player.cash += reward;
             showMessage("治愈出院", `病人康复离开。收到报酬/捐赠 $${reward}。`);
@@ -1863,7 +2259,9 @@
                 if (ach.key === 'rankIndex') current = player.rankIndex;
                 else if (ach.key === 'currentPatients') current = patients.length;
                 else if (ach.key === 'baseLevelIdx') current = camp.baseLevelIdx;
-                else if (ach.key === 'maxExamStreak') current = maxExamStreak;
+                else                 if (ach.key === 'maxExamStreak') current = maxExamStreak;
+                else if (ach.key === 'hasYearsStitchedWound') current = player.stats.hasYearsStitchedWound ? 1 : 0;
+                else if (ach.key === 'hasObservationStation52') current = player.stats.hasObservationStation52 ? 1 : 0;
                 else current = player.stats[ach.key] || 0;
                 
                 let percent = Math.floor(Math.min(100, (current / ach.target) * 100));
@@ -1977,8 +2375,8 @@
             if(camp.refugees >= cap) return showMessage("营地已满", `当前等级上限 ${cap} 人`);
             changes = { health: -10, refugees: 10 };
         } else if (type === 'big_spender') {
-            if(camp.funds < 1000) return showMessage("资金不足", "需要$1000基地资金");
-            changes = { funds: -1000, tension: -8 };
+            if(camp.funds < 2000) return showMessage("资金不足", "需要$2000基地资金");
+            changes = { funds: -2000, tension: -10 };
         }
 
         applyChanges(changes);
@@ -1988,7 +2386,7 @@
 
     function handleFundsClick() {
         fundsClickCount++;
-        if (fundsClickCount >= 3) {
+        if (fundsClickCount >= 1) {
             fundsClickCount = 0; // 重置计数器
             $('embezzle-slider').value = 0;
             updateEmbezzleSlider();
@@ -2354,10 +2752,17 @@
         camp.funds -= fundCost;
         report.push({ name: "基地运营成本", val: `-$${fundCost}`, type: "down" });
 
-        // 3. 难民自然衰减
-        const decayRef = randInt(5, 10);
-        camp.refugees = Math.max(0, camp.refugees - decayRef);
-        report.push({ name: "难民自然变动", val: `-${decayRef}`, type: "down" });
+        // 3. 难民自然增加
+        const increaseRef = randInt(4, 8);
+        const cap = BASE_LEVELS[camp.baseLevelIdx].cap;
+        if(camp.refugees >= cap) {
+            // 达到容量上限，增加紧张度
+            camp.tension = Math.min(100, camp.tension + 5);
+            report.push({ name: "难民数量已达上限", val: "紧张度 +5", type: "down" });
+        } else {
+            camp.refugees = Math.min(cap, camp.refugees + increaseRef);
+            report.push({ name: "难民自然变动", val: `+${increaseRef}`, type: "up" });
+        }
         
         // 物资与净水自然衰减：随机(3-6)
         const decaySupplies = randInt(3, 6);
@@ -2411,6 +2816,12 @@
         player.health = Math.min(100, player.health + 10);
         player.energy = Math.min(100, player.energy + 10);
         report.push({ name: "身心自动恢复", val: "+10", type: "up" });
+        
+        // 被遗忘的孤儿季度结算额外效果：精力 +2
+        if(player.stats.hasForgottenOrphan) {
+            player.energy = Math.min(100, player.energy + 2);
+            report.push({ name: "被遗忘的孤儿", val: "精力 +2", type: "up" });
+        }
 
         // 6. 重置本季行动限制
         player.quarterlyActions = { running: 0, sleep: 0 };
@@ -2456,6 +2867,8 @@
         admittedCount = 0;
         hasRounded = false;
         hasTakenExam = false;
+        if(!player.stats.quarterlyCured) player.stats.quarterlyCured = 0;
+        player.stats.quarterlyCured = 0; // 重置本季度治愈人数
 
         saveGame('auto');
     }
@@ -2475,10 +2888,22 @@
 
     function addTransferButton() {
         if($('btn-transfer')) return;
+        
+        // 检查是否被"季候风的判决"事件阻止调任
+        if(player.stats.transferBlocked === currentQuarter) {
+            return; // 本季度无法调任
+        }
+        
         let btn = document.createElement('button');
         btn.id = 'btn-transfer';
         btn.innerText = "🚀 申请调任 (3年期满)";
         btn.onclick = () => {
+            // 再次检查是否被阻止
+            if(player.stats.transferBlocked === currentQuarter) {
+                showMessage("无法调任", "由于季候风的判决，本季度无法申请调任。");
+                return;
+            }
+            
             if(!player.stats.visitedLocs) player.stats.visitedLocs = [];
             player.stats.visitedLocs.push(player.location);
             let available = CHAR_LOCATIONS.filter(l => !player.stats.visitedLocs.includes(l));
@@ -2487,6 +2912,7 @@
             player.stats.currentLocQuarters = 0;
             camp.baseLevelIdx = 0; // 基地重置
             btn.remove(); // Remove button after transfer
+            $('game-location-display').innerText = '📍 ' + player.location;
             showMessage("调任成功", `你已前往 ${player.location}，职级已保留，需从头建设基地。`);
             updateUI();
         };
@@ -2495,26 +2921,113 @@
     
     // 特殊事件检查
     async function checkSpecialEvents() {
-        for(const evt of SPECIAL_EVENTS) {
-            if(Math.random() < evt.chance && evt.condition()) {
-                await triggerSpecialEvent(evt);
-                break; // 每季度最多触发1个特殊事件
+        // 80%概率触发特殊事件
+        if(Math.random() > 0.8) {
+            return; // 20%概率不触发任何特殊事件
+        }
+        
+        // 初始化事件冷却记录
+        if(!player.eventCooldowns) player.eventCooldowns = {};
+        
+        // 筛选出符合条件的特殊事件（排除延迟触发的事件patient_reward）
+        let availableEvents = SPECIAL_EVENTS.filter(evt => {
+            if(evt.id === 'patient_reward') return false;
+            if(!evt.condition()) return false;
+            
+            // 检查冷却：如果事件在3个季度内触发过，则跳过
+            const lastQuarter = player.eventCooldowns[evt.id];
+            if(lastQuarter !== undefined && (currentQuarter - lastQuarter) < 3) {
+                return false;
             }
+            
+            return true;
+        });
+        
+        // 如果没有任何可用事件，强制选择无条件的事件（force_majeure, international_visit, visitors_from_afar），但也要检查冷却
+        if(availableEvents.length === 0) {
+            availableEvents = SPECIAL_EVENTS.filter(evt => {
+                if(evt.id === 'patient_reward') return false;
+                if(evt.id === 'force_majeure' || evt.id === 'international_visit' || evt.id === 'visitors_from_afar') {
+                    const lastQuarter = player.eventCooldowns[evt.id];
+                    if(lastQuarter !== undefined && (currentQuarter - lastQuarter) < 3) {
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            });
+        }
+        
+        // 确保至少有一个事件可选
+        if(availableEvents.length === 0) {
+            return; // 如果真的没有任何事件，跳过
+        }
+        
+        // 按概率随机选择一个事件
+        let totalWeight = 0;
+        const weightedEvents = [];
+        
+        availableEvents.forEach(evt => {
+            if(evt.chance > 0) {
+                totalWeight += evt.chance;
+                weightedEvents.push({ event: evt, weight: totalWeight });
+            }
+        });
+        
+        // 如果所有事件概率都是0，选择第一个
+        if(weightedEvents.length === 0) {
+            if(availableEvents.length > 0) {
+                await triggerSpecialEvent(availableEvents[0]);
+            }
+            return;
+        }
+        
+        // 随机选择一个事件
+        const random = Math.random() * totalWeight;
+        let selectedEvent = null;
+        for(const item of weightedEvents) {
+            if(random <= item.weight) {
+                selectedEvent = item.event;
+                break;
+            }
+        }
+        
+        // 如果随机选择失败，选择第一个可用事件
+        if(!selectedEvent) {
+            selectedEvent = availableEvents[0];
+        }
+        
+        // 触发选中的特殊事件
+        if(selectedEvent) {
+            await triggerSpecialEvent(selectedEvent);
         }
     }
     
     async function triggerSpecialEvent(evt) {
         addLog(`⚡ 特殊事件：${evt.name}`);
         
+        // 记录事件触发季度（用于冷却机制）
+        // 被遗忘的孤儿等仅触发一次的事件不记录冷却，因为它们已经有自己的标记
+        if(!player.eventCooldowns) player.eventCooldowns = {};
+        if(!['forgotten_orphan', 'veteran_volunteer', 'yesterdays_phantom', 'silent_farewell', 'years_stitched_wound', 'observation_station_52'].includes(evt.id)) {
+            player.eventCooldowns[evt.id] = currentQuarter;
+        }
+        
         if(evt.effect === 'transfer') {
             // 不可抗力：强制调任
             if(!player.stats.visitedLocs) player.stats.visitedLocs = [];
             player.stats.visitedLocs.push(player.location);
             let available = CHAR_LOCATIONS.filter(l => !player.stats.visitedLocs.includes(l));
-            if(available.length === 0) available = CHAR_LOCATIONS;
-            player.location = available[randInt(0, available.length-1)];
+            if(available.length === 0) {
+                // 如果所有地点都访问过，重置列表
+                player.stats.visitedLocs = [];
+                available = CHAR_LOCATIONS;
+            }
+            const newLocation = available[randInt(0, available.length-1)];
+            player.location = newLocation;
             player.stats.currentLocQuarters = 0;
-            camp.baseLevelIdx = 0;
+            camp.baseLevelIdx = 0; // 基地重置
+            $('game-location-display').innerText = '📍 ' + player.location;
             showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n你被调往 ${player.location}。`);
             updateUI();
         } 
@@ -2575,6 +3088,296 @@
             showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n个人存款 +$300，基地物资 +10。`);
             updateUI();
         }
+        else if(evt.effect === 'visitors_from_afar') {
+            // 有朋自远方来：显示选择弹窗
+            return new Promise(resolve => {
+                $('special-event-modal').style.display = 'flex';
+                $('special-event-title').innerText = `⚡ ${evt.name}`;
+                $('special-event-desc').innerText = evt.desc;
+                $('special-event-choices').innerHTML = `
+                    <button class="modal-btn" style="background:var(--green); margin-bottom:10px;" onclick="handleVisitorsChoice('accept')">😊 不亦说乎</button>
+                    <button class="modal-btn secondary" onclick="handleVisitorsChoice('refuse')">❌ 拒绝</button>
+                `;
+                window.specialEventResolve = resolve;
+            });
+        }
+        else if(evt.effect === 'veteran_volunteer') {
+            // 老兵志愿者加入：医学永久 +5，行政永久 +5（仅触发一次）
+            player.stats.hasVeteranVolunteer = true;
+            player.med = Math.min(100, player.med + 5);
+            player.admin = Math.min(100, player.admin + 5);
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n医学永久 +5，行政永久 +5。`);
+            updateUI();
+        }
+        else if(evt.effect === 'illegal_drug_scandal') {
+            // 非法药物实验丑闻：消耗 15 精力进行公关，否则嫌疑度 +20
+            return new Promise(resolve => {
+                $('special-event-modal').style.display = 'flex';
+                $('special-event-title').innerText = `⚡ ${evt.name}`;
+                $('special-event-desc').innerText = evt.desc;
+                $('special-event-choices').innerHTML = `
+                    <button class="modal-btn" style="background:var(--blue); margin-bottom:10px;" onclick="handleDrugScandalChoice('pr')">💼 进行公关 (精力-15)</button>
+                    <button class="modal-btn secondary" onclick="handleDrugScandalChoice('ignore')">❌ 置之不理 (嫌疑度+20)</button>
+                `;
+                window.specialEventResolve = resolve;
+            });
+        }
+        else if(evt.effect === 'international_journalists') {
+            // 国际记者团到访：基地资金 +2000，但营地紧张度 +5
+            applyChanges({ funds: 2000, tension: 5 }, "国际记者团到访");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n基地资金 +$2000，但营地紧张度 +5（引起地方武装注意）。`);
+            updateUI();
+        }
+        else if(evt.effect === 'candlelight_mass') {
+            // 烛火下的弥撒：营地紧张度 -15，精力 +10，但物资 -2
+            applyChanges({ tension: -15, energy: 10, supplies: -2 }, "烛火下的弥撒");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n营地紧张度 -15，精力 +10，但物资 -2（消耗了蜡烛和饮水）。`);
+            updateUI();
+        }
+        else if(evt.effect === 'yesterdays_phantom') {
+            // 昨日的幻影：医学永久 +2，社交永久 +2，精力 -5（仅触发一次）
+            player.stats.hasYesterdaysPhantom = true;
+            player.med = Math.min(100, player.med + 2);
+            player.soc = Math.min(100, player.soc + 2);
+            applyChanges({ energy: -5 }, "昨日的幻影");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n精神共鸣，医学永久 +2，社交永久 +2，精力 -5。`);
+            updateUI();
+        }
+        else if(evt.effect === 'crossing_redemption') {
+            // 越线的救赎：选择救或弃
+            return new Promise(resolve => {
+                $('special-event-modal').style.display = 'flex';
+                $('special-event-title').innerText = `⚡ ${evt.name}`;
+                $('special-event-desc').innerText = evt.desc;
+                $('special-event-choices').innerHTML = `
+                    <button class="modal-btn" style="background:var(--primary); margin-bottom:10px;" onclick="handleCrossingRedemptionChoice('save')">⚕️ 救他 (健康-10, 紧张度+20, 医学+10)</button>
+                    <button class="modal-btn secondary" onclick="handleCrossingRedemptionChoice('abandon')">🚫 放弃 (紧张度-5, 精力-20)</button>
+                `;
+                window.specialEventResolve = resolve;
+            });
+        }
+        else if(evt.effect === 'forgotten_orphan') {
+            // 被遗忘的孤儿：难民 +1，社交 -5，但每季度结算额外获得 精力 +2
+            player.stats.hasForgottenOrphan = true;
+            applyChanges({ refugees: 1, soc: -5 }, "被遗忘的孤儿");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n难民 +1，社交 -5，但每季度结算额外获得 精力 +2（心灵寄托）。`);
+            updateUI();
+        }
+        else if(evt.effect === 'bloody_medal') {
+            // 染血的勋章：接受或拒绝
+            return new Promise(resolve => {
+                $('special-event-modal').style.display = 'flex';
+                $('special-event-title').innerText = `⚡ ${evt.name}`;
+                $('special-event-desc').innerText = evt.desc;
+                $('special-event-choices').innerHTML = `
+                    <button class="modal-btn" style="background:var(--gold); margin-bottom:10px;" onclick="handleBloodyMedalChoice('accept')">💰 接受 (个人存款+$3000, 嫌疑度+30)</button>
+                    <button class="modal-btn secondary" onclick="handleBloodyMedalChoice('refuse')">❌ 拒绝 (上级好感度+10, 紧张度+10)</button>
+                `;
+                window.specialEventResolve = resolve;
+            });
+        }
+        else if(evt.effect === 'monsoon_gift') {
+            // 季候风的馈赠：净水补满，营地紧张度 -10，健康 +5
+            camp.water = 100; // 净水补满
+            applyChanges({ tension: -10, health: 5 }, "季候风的馈赠");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n净水补满，营地紧张度 -10，健康 +5。`);
+            updateUI();
+        }
+        else if(evt.effect === 'silent_farewell') {
+            // 沉默的告别：医学永久 +3，精力 -10（仅触发一次）
+            player.stats.hasSilentFarewell = true;
+            player.med = Math.min(100, player.med + 3);
+            applyChanges({ energy: -10 }, "沉默的告别");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n见证生死，医学永久 +3，精力 -10。`);
+            updateUI();
+        }
+        else if(evt.effect === 'last_cigarette') {
+            // 最后的一支烟：上级好感度 +15，精力 +20
+            applyChanges({ favor: 15, energy: 20 }, "最后的一支烟");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n羁绊加深，上级好感度 +15，精力 +20。`);
+            updateUI();
+        }
+        else if(evt.effect === 'wire_wedding') {
+            // 铁丝网外的婚礼：营地紧张度 -20，精力 +20，社交永久 +2
+            player.soc = Math.min(100, player.soc + 2);
+            applyChanges({ tension: -20, energy: 20 }, "铁丝网外的婚礼");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n营地紧张度 -20，精力 +20，社交永久 +2。`);
+            updateUI();
+        }
+        else if(evt.effect === 'thousand_heartbeat') {
+            // 第1000次心跳：精力补满，上级好感度 +15，社交永久 +3
+            player.soc = Math.min(100, player.soc + 3);
+            player.energy = 100;
+            applyChanges({ favor: 15 }, "第1000次心跳");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n精力补满，上级好感度 +15，社交永久 +3。`);
+            updateUI();
+        }
+        else if(evt.effect === 'ruins_echo') {
+            // 废墟上的回响：营地紧张度 -10，精力 -15，但社交永久 +2
+            player.soc = Math.min(100, player.soc + 2);
+            applyChanges({ tension: -10, energy: -15 }, "废墟上的回响");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n营地紧张度 -10，精力 -15，但社交永久 +2。`);
+            updateUI();
+        }
+        else if(evt.effect === 'buried_truth') {
+            // 被掩埋的真相：基地资金 +2000，嫌疑度 +15
+            applyChanges({ funds: 2000, suspicion: 15 }, "被掩埋的真相");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n基地资金 +$2000（揭露真相后的专项拨款），嫌疑度 +15。`);
+            updateUI();
+        }
+        else if(evt.effect === 'horizon_dust') {
+            // 地平线的尘烟：难民 +30，物资 -10，上级好感度 +10
+            const cap = BASE_LEVELS[camp.baseLevelIdx].cap;
+            const actualRefugees = Math.min(cap, camp.refugees + 30);
+            camp.refugees = actualRefugees;
+            applyChanges({ supplies: -10, favor: 10 }, "地平线的尘烟");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n难民 +30，物资 -10，上级好感度 +10。`);
+            updateUI();
+        }
+        else if(evt.effect === 'deadly_silence') {
+            // 致命的"静默期"：物资 +15，净水 +15，营地紧张度 -5
+            applyChanges({ supplies: 15, water: 15, tension: -5 }, "致命的静默期");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n物资 +15，净水 +15，营地紧张度 -5。`);
+            updateUI();
+        }
+        else if(evt.effect === 'years_stitched_wound') {
+            // 岁月缝合的伤口：医学永久 +10，精力 +50，解锁成就【传承者】
+            player.stats.hasYearsStitchedWound = true;
+            player.med = Math.min(100, player.med + 10);
+            applyChanges({ energy: 50 }, "岁月缝合的伤口");
+            // 解锁成就
+            if(!player.achievements.inheritor) {
+                player.achievements.inheritor = true;
+                addAchievement("传承者");
+            }
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n医学永久 +10，精力 +50，解锁成就：【传承者】。`);
+            updateUI();
+        }
+        else if(evt.effect === 'silent_game') {
+            // 无声的博弈：营地紧张度 -10，精力 -10，社交永久 +3
+            player.soc = Math.min(100, player.soc + 3);
+            applyChanges({ tension: -10, energy: -10 }, "无声的博弈");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n营地紧张度 -10，精力 -10，社交永久 +3。`);
+            updateUI();
+        }
+        else if(evt.effect === 'monsoon_disease') {
+            // 季风带来的疫症：健康 -10，物资 -10，难民人数 -20
+            const actualRefugees = Math.max(0, camp.refugees - 20);
+            camp.refugees = actualRefugees;
+            applyChanges({ health: -10, supplies: -10 }, "季风带来的疫症");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n健康 -10，物资 -10，难民人数 -20。`);
+            updateUI();
+        }
+        else if(evt.effect === 'bed7_sketch') {
+            // 第7号床位的素描：精力补满，社交永久 +2，上级好感度 +10
+            player.soc = Math.min(100, player.soc + 2);
+            player.energy = 100;
+            applyChanges({ favor: 10 }, "第7号床位的素描");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n精力补满，社交永久 +2，上级好感度 +10。`);
+            updateUI();
+        }
+        else if(evt.effect === 'thousand_one_story') {
+            // 第一千零一个故事：精力补满，社交永久 +5，上级好感度 +5
+            player.soc = Math.min(100, player.soc + 5);
+            player.energy = 100;
+            applyChanges({ favor: 5 }, "第一千零一个故事");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n精力补满，社交永久 +5，上级好感度 +5。`);
+            updateUI();
+        }
+        else if(evt.effect === 'monsoon_judgment') {
+            // 季候风的判决：无法申请调任（本季度），物资 -10，净水 +20
+            player.stats.transferBlocked = currentQuarter; // 标记本季度无法调任
+            applyChanges({ supplies: -10, water: 20 }, "季候风的判决");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n无法申请调任（本季度），物资 -10，净水 +20。`);
+            updateUI();
+        }
+        else if(evt.effect === 'underground_clinic') {
+            // 地下诊所的暗流：营地紧张度 +15，难民 -10，嫌疑度 +5
+            const actualRefugees = Math.max(0, camp.refugees - 10);
+            camp.refugees = actualRefugees;
+            applyChanges({ tension: 15, suspicion: 5 }, "地下诊所的暗流");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n营地紧张度 +15，难民 -10，嫌疑度 +5。`);
+            updateUI();
+        }
+        else if(evt.effect === 'silent_delivery') {
+            // 寂静的产房：难民 -5，精力 -20
+            const actualRefugees = Math.max(0, camp.refugees - 5);
+            camp.refugees = actualRefugees;
+            applyChanges({ energy: -20 }, "寂静的产房");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n难民 -5，精力 -20。`);
+            updateUI();
+        }
+        else if(evt.effect === 'vanished_bloodbank') {
+            // 消失的血库：所有病人诊疗进度 -20%，营地紧张度 +10
+            patients.forEach(p => {
+                if(!p.isDead) {
+                    p.prog = Math.max(0, p.prog - 20);
+                }
+            });
+            applyChanges({ tension: 10 }, "消失的血库");
+            renderPatients();
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n所有病人诊疗进度 -20%，营地紧张度 +10。`);
+            updateUI();
+        }
+        else if(evt.effect === 'betrayed_coordinates') {
+            // 被出卖的坐标：健康 -20，基地资金 -2000，嫌疑度 -10（总部因此事停止调查）
+            applyChanges({ health: -20, funds: -2000, suspicion: -10 }, "被出卖的坐标");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n健康 -20，基地资金 -$2000，嫌疑度 -10（总部因此事停止调查）。`);
+            updateUI();
+        }
+        else if(evt.effect === 'ashes_peace') {
+            // 灰烬中的和平协议：营地紧张度 -30，精力 +50
+            applyChanges({ tension: -30, energy: 50 }, "灰烬中的和平协议");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n营地紧张度 -30，精力 +50。`);
+            updateUI();
+        }
+        else if(evt.effect === 'observation_station_52') {
+            // 第52号观察站：医学永久 +5，精力 -10，获得成就【真理守望者】
+            player.stats.hasObservationStation52 = true;
+            player.med = Math.min(100, player.med + 5);
+            applyChanges({ energy: -10 }, "第52号观察站");
+            // 解锁成就
+            if(!player.achievements.truth_keeper) {
+                player.achievements.truth_keeper = true;
+                addAchievement("真理守望者");
+            }
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n医学永久 +5，精力 -10，获得成就：【真理守望者】。`);
+            updateUI();
+        }
+        else if(evt.effect === 'wire_market') {
+            // 铁丝网下的市集：基地资金 +1000，物资 -5，嫌疑度 +10
+            applyChanges({ funds: 1000, supplies: -5, suspicion: 10 }, "铁丝网下的市集");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n基地资金 +$1000，物资 -5，嫌疑度 +10。`);
+            updateUI();
+        }
+        else if(evt.effect === 'desert_mirage') {
+            // 沙漠里的"海市蜃楼"：营地紧张度 +20，精力 -10
+            applyChanges({ tension: 20, energy: -10 }, "沙漠里的海市蜃楼");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n营地紧张度 +20，精力 -10。`);
+            updateUI();
+        }
+        else if(evt.effect === 'borderless_funeral') {
+            // 无国界的葬礼：社交永久 +5，上级好感度 +15，精力补满
+            player.soc = Math.min(100, player.soc + 5);
+            player.energy = 100;
+            applyChanges({ favor: 15 }, "无国界的葬礼");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n社交永久 +5，上级好感度 +15，精力补满。`);
+            updateUI();
+        }
+        else if(evt.effect === 'delayed_olive_branch') {
+            // 被延迟的"橄榄枝"：死亡人数 +1，营地紧张度 +10，精力 -15
+            player.stats.deaths = (player.stats.deaths || 0) + 1;
+            applyChanges({ tension: 10, energy: -15 }, "被延迟的橄榄枝");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n死亡人数 +1，营地紧张度 +10，精力 -15。`);
+            updateUI();
+        }
+        else if(evt.effect === 'dawn_silence') {
+            // 这里的黎明静悄悄：营地紧张度 -10，精力 -20，社交永久 +3
+            player.soc = Math.min(100, player.soc + 3);
+            applyChanges({ tension: -10, energy: -20 }, "这里的黎明静悄悄");
+            showMessage(`⚡ ${evt.name}`, `${evt.desc}\n\n营地紧张度 -10，精力 -20，社交永久 +3。`);
+            updateUI();
+        }
     }
     
     function handleHomesickChoice(choice) {
@@ -2621,26 +3424,145 @@
         if(choice === 'accept') {
             // 添加一位重症病人
             const wardCap = WARD_CAPS[camp.wardLevel];
-            if(patients.length >= wardCap) {
+            const maxCap = BASE_LEVELS[camp.baseLevelIdx].wardCap;
+            if(patients.length >= wardCap || patients.length >= maxCap) {
                 showMessage("提示", "病房已满，无法收治。");
             } else {
-                patients.push({
+                const bedNum = findEmptyBed(maxCap);
+                const age = randInt(0, 75);
+                const gender = Math.random() > 0.5 ? "男" : "女";
+                const sev = 2; // 重症
+                
+                const newPatient = {
+                    bed: bedNum,
                     name: "特殊病人",
-                    age: randInt(0, 75),
-                    sev: 2, // 重症
+                    age: age,
+                    gender: gender,
+                    sev: sev,
                     prog: 0,
                     vital: 20, // 重症初始生命指征
                     treatCount: 0,
-                    isDead: false
-                });
+                    isDead: false,
+                    cc: "生成中...",
+                    hpi: "生成中..."
+                };
+                
+                patients.push(newPatient);
+                patients.sort((a,b) => a.bed - b.bed);
+                renderPatients();
+                updateUI();
+                
+                // API Call for text - 调用API生成主诉和现病史
+                try {
+                    const prompt = `生成一个无国界医生前线病人病例。
+                    科室:${player.dept}。病人:${age}岁${gender}，危急度:重症。
+                    请返回JSON格式: {"cc":"主诉(20字内)", "hpi":"现病史(70字左右)"}`;
+                    
+                    callDeepSeek(prompt, true).then(res => {
+                        newPatient.cc = res.cc;
+                        newPatient.hpi = res.hpi;
+                        renderPatients();
+                    });
+                } catch(e) {
+                    newPatient.cc = "腹痛伴发热3天";
+                    newPatient.hpi = "患者3天前无明显诱因出现腹痛，伴发热，最高体温38.5度。";
+                    renderPatients();
+                }
+                
                 // 设置3个季度后触发"救人的回报"
                 pendingSpecialPatientReward = 3;
                 showMessage("特殊病人", "家属对你叠声感谢。你收治了这位重症病人。");
-                renderPatients();
+                saveGame('auto');
             }
         } else {
             applyChanges({ tension: 5 }, "拒绝收治");
             showMessage("特殊病人", "家属带着病人失望地离去了。\n\n紧张度 +5。");
+        }
+        
+        updateUI();
+        if(window.specialEventResolve) {
+            window.specialEventResolve();
+            window.specialEventResolve = null;
+        }
+    }
+
+    function handleVisitorsChoice(choice) {
+        $('special-event-modal').style.display = 'none';
+        
+        if(choice === 'accept') {
+            // 不亦说乎：基地紧张度降低10，物资-5
+            applyChanges({ tension: -10, supplies: -5 }, "有朋自远方来");
+            showMessage("有朋自远方来", "你热情地接待了这些客人，虽然语言不通，但通过手势和微笑，你们建立了友谊。\n\n基地紧张度 -10，物资 -5。");
+        } else {
+            // 拒绝：增加紧张度
+            applyChanges({ tension: 5 }, "拒绝接待");
+            showMessage("有朋自远方来", "你拒绝了这些客人的到访，他们失望地离开了。\n\n紧张度 +5。");
+        }
+        
+        updateUI();
+        if(window.specialEventResolve) {
+            window.specialEventResolve();
+            window.specialEventResolve = null;
+        }
+    }
+
+    function handleDrugScandalChoice(choice) {
+        $('special-event-modal').style.display = 'none';
+        
+        if(choice === 'pr') {
+            // 进行公关：消耗15精力
+            if(player.energy < 15) {
+                showMessage("精力不足", "你的精力不足以进行公关。嫌疑度 +20。");
+                player.suspicion += 20;
+            } else {
+                applyChanges({ energy: -15 }, "进行公关");
+                showMessage("非法药物实验丑闻", "你花费大量精力进行公关，成功澄清了谣言。");
+            }
+        } else {
+            // 置之不理：嫌疑度 +20
+            player.suspicion += 20;
+            showMessage("非法药物实验丑闻", "你没有进行公关，谣言持续发酵。嫌疑度 +20。");
+        }
+        
+        updateUI();
+        if(window.specialEventResolve) {
+            window.specialEventResolve();
+            window.specialEventResolve = null;
+        }
+    }
+
+    function handleCrossingRedemptionChoice(choice) {
+        $('special-event-modal').style.display = 'none';
+        
+        if(choice === 'save') {
+            // 救他：健康 -10，紧张度 +20，医学 +10
+            player.med = Math.min(100, player.med + 10);
+            applyChanges({ health: -10, tension: 20 }, "越线的救赎");
+            showMessage("越线的救赎", "你选择了救他，尽管这可能会招来报复。健康 -10，紧张度 +20，医学 +10。");
+        } else {
+            // 放弃：紧张度 -5，精力 -20
+            applyChanges({ tension: -5, energy: -20 }, "越线的救赎");
+            showMessage("越线的救赎", "你选择放弃，但内心的愧疚让你难以平静。紧张度 -5，精力 -20。");
+        }
+        
+        updateUI();
+        if(window.specialEventResolve) {
+            window.specialEventResolve();
+            window.specialEventResolve = null;
+        }
+    }
+
+    function handleBloodyMedalChoice(choice) {
+        $('special-event-modal').style.display = 'none';
+        
+        if(choice === 'accept') {
+            // 接受：个人存款 +3000，嫌疑度 +30
+            applyChanges({ cash: 3000, suspicion: 30 }, "染血的勋章");
+            showMessage("染血的勋章", "你接受了勋章，但也接受了这个交易。个人存款 +$3000，嫌疑度 +30。");
+        } else {
+            // 拒绝：上级好感度 +10，紧张度 +10
+            applyChanges({ favor: 10, tension: 10 }, "染血的勋章");
+            showMessage("染血的勋章", "你拒绝了勋章，坚持了原则。上级好感度 +10，紧张度 +10。");
         }
         
         updateUI();
